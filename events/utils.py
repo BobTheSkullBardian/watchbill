@@ -18,12 +18,11 @@ class Calendar(HTMLCalendar):
         self.month = month
         self.setfirstweekday(SUNDAY)
         # print(f'Sunday: {SUNDAY}')
-        self.events = events  # .filter(active=True)
+        self.events = events
 
     # formats a day as a td
     # filter events by day
     def formatday(self, day, weekday, events):
-        red = "style='color:red;'"
         if day == 0:
             return '<td><span class="noday">&nbsp;</span></td>'
         events_per_day = events.filter(day__day=day, active=True)
@@ -33,11 +32,14 @@ class Calendar(HTMLCalendar):
         d = ''
         for (_d, _t), events in sorted(times.items()):
             d += f'<li>{_t.strftime("%H%M")}<ul>'
+            red = "style='color:red;'"
             for event in events:
-                d += f'{("","<b>")[event.acknowledged]}'
-                d += f'<li {(red,"")[event.stander.quald]}>{event.position}</br>'
+                status = f'{(red,"")[event.stander.quald]}'
+                # d += f'{("","<b>")[event.acknowledged]}'
+                d += f'<li {status}>{event.position}</br>'
                 d += f'{event.stander.rate} {event.stander.name.split(",")[0]}</li>'
-                d += f'{("","</b>")[event.acknowledged]}'
+                # d += f'{("","</b>")[event.acknowledged]}'
+                if event.acknowledged: d = f'<b>{d}</b>'
             d += '</ul>'
         return f'<td><span class="date">{day}</span><ul> {d} </ul></td>'
 
@@ -61,6 +63,7 @@ class Calendar(HTMLCalendar):
         cal += f'{self.formatweekheader()}\n'
         for week in self.monthdays2calendar(self.year, self.month):
             cal += f'{self.formatweek(week, events)}\n'
+        cal += '</table>'
         return cal
 
 

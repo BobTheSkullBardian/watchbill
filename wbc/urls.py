@@ -32,6 +32,6 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('upload/', process, name='process'),
-    path('', view=CalendarView.as_view(), name='calendar'),
+    path('', view=CalendarView.as_view(), name='index'),
     path('calendar/', view=CalendarView.as_view(), name='calendar'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
