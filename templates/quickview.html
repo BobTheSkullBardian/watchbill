@@ -1,0 +1,13 @@
+{% extends "auth.html" %}
+{% block content %}
+{% for day, quals in data.items %}
+    <p>day:{{ day }}</p>
+    {% for qual, watches in quals.items %}
+        <p>qual:{{ qual }}</p>
+        {% for watch in watches %}
+            <p>watch: {{ watch }}</p>
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
+
+{% endblock content %}

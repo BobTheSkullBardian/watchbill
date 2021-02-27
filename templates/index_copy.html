@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if sailors %}
+    <ul>
+    {% for sailor in sailors %}
+        <li><a href="/sailors/{{ sailor.id }}/">{{ sailor.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No sailors in Database.</p>
+{% endif %}
+
+{% endblock content%}

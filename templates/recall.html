@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for watch in watches %}
+    <div class='dutyday'>
+        <!-- <h1>Duty Day: {{ dutyday }}</h1> -->
+            <h3>{{ watch.position }} : {{ watch.stander.name }}</h3>
+            <p>{{ watch.stander.phone }} {% if watch.acknowledged %} </em>Acknowledged<em> {% endif %}</p>
+            <p>This is a friendly reminder that you have {{ watch.position.label }} watch, {{ watch.day }}.</p>
+    </div>
+{% endfor %}
+{% endblock %}

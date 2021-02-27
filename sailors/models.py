@@ -1,0 +1,137 @@
+from django.db import models
+from django.core.validators import RegexValidator
+from django.urls import reverse
+import datetime
+
+
+def create_sailor(data):
+    try:
+        sailor = Sailor.objects.get(
+            name=data['name'],
+        )
+        sailor.update(**data)
+        return False
+
+    except Sailor.DoesNotExist:
+        return True
+
+
+class Sailor(models.Model):
+    class Meta:
+        ordering = (
+            '-qual__qual',
+            'name',
+            # 'qualdate',
+        )
+
+    def __str__(self):
+        display_fields = [
+            self.name,
+            self.rate,
+            # self.phone,
+            # *self.quals(),
+        ]
+        display = ", ".join([field for field in display_fields])
+        return display
+
+    def __retr__(self):
+        return self
+
+    def get_absolute_url(self):
+        label = self._meta.app_label
+        name = self._meta.model_name
+        url = reverse(f'admin:{label}_{name}_change', args=[self.id])
+        return f'<a href="{url}">{self.rate} {self.name.split(",")[0]}</a>'
+
+    def quals(self):
+        return [str(q) for q in self.qual.all()]
+
+    def dinq_date(self):
+        if self.quald:
+            return None
+        if self.report:
+            days_to_qual = 45
+            today = datetime.date.today()
+            delta = datetime.timedelta(days=days_to_qual)
+            dinq = self.report + delta
+            if today > dinq:
+                return f'{(today - dinq).days} days past {dinq.strftime("%b. %d, %Y")}'
+            else:
+                return f'{(dinq - today).days} days until {dinq.strftime("%b. %d, %Y")}'
+
+        else:
+            return None
+    dinq_date.admin_order_field = 'report'
+
+    def get_watches(self):
+        return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.all().order_by('day')][-3:]
+    get_watches.short_description = "Last 3 Watches"
+    get_watches.allow_tags = True
+
+    DEPTS = (
+        ('31', '31'),
+        ('32', '32'),
+        ('33', '33'),
+        ('34', '34'),
+        ('35', '35'),
+    )
+
+    RATES = [
+        (x + y, x + y) for x in [
+            'CTN',
+            'CTR',
+            'CTI',
+            'IT',
+            'IS',
+        ] for y in [
+            '1',
+            '2',
+            '3',
+            'SN',
+            'SA',
+            'SR',
+        ]
+    ]
+
+    active = models.BooleanField('Active', default=True)
+    name = models.CharField('Name', max_length=40)
+    qual = models.ManyToManyField(
+        'Qual', verbose_name='Watch Qualification', blank=True, default=None)
+    quald = models.BooleanField('Qualified', default=False)
+    rate = models.CharField(
+        'Rate', max_length=5, choices=RATES)
+    dept = models.CharField(
+        'Department', max_length=2, choices=DEPTS, default="")
+    phone_regex = RegexValidator(regex=r'^(\d{3}-\d{3}-\d{4})?')
+    phone = models.CharField(
+        'Phone #', validators=(phone_regex,), max_length=12,
+        blank=True, default='')
+    email = models.EmailField('Email', max_length=50, default="", blank=True)
+    work_email = models.EmailField(
+        'Professional Email', max_length=50, null=True, blank=True)
+    in_teams = models.CharField(
+        'Teams Access', choices=[('CVR', 'CVR'), ('Guest', 'Guest')],
+        max_length=5, default="")
+    report = models.DateField("Report Date", null=True, blank=True)
+    qualdate = models.DateField("Date Qual'd", null=True, blank=True)
+    notes = models.CharField('Notes',
+        max_length=100,
+        default="", blank=True)
+    availability = models.CharField(
+        'Availability', max_length=100, default="", blank=True)
+
+
+class Qual(models.Model):
+    class Meta:
+        verbose_name = u'Qualification'
+        verbose_name_plural = u'Qualifications'
+
+    def __str__(self):
+        return str(self.qual)
+
+    def __retr__(self):
+        return self.qual
+
+    qual = models.CharField('Watch Qual', max_length=30, unique=True)
+    jqr = models.BooleanField(
+        "JQR Req'd", default=True)

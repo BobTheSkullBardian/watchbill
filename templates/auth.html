@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block auth %}
+    {% if request.user.is_authenticated %}
+        <!-- <a href='/gain/upload/'>Upload new ps</a> -->
+        <form action='/upload/' method='POST' enctype="multipart/form-data">{% csrf_token %}
+            <input type="file" name="file" value="file" id="file">
+            <label for="file"> Process new ps file?</label> 
+            <input type="submit" value="Process">
+        </form>
+
+        {% block content %}
+
+        {% endblock content %}
+
+    {% else %}
+        You cannot view this without authenticating
+        <li><a href="/admin/">Log in</a></li>
+    {% endif %}
+
+{% endblock auth %}
