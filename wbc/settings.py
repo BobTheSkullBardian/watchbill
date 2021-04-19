@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.conf.locale.en import formats as en_formats
+
+en_formats.DATETIME_FORMAT = "d M y Hi"
+en_formats.DATE_FORMAT = "d M y"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -25,8 +28,10 @@ SECRET_KEY = '!pbcz67!o76%2tk)9d0@nk=lv_t9@&x*grik^vf0vw7l4!x&a+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ['34.232.247.167']
+# ALLOWED_HOSTS = ['SERVER-IP', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -122,8 +127,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static/'),
-)
+# STATICFILES_DIRS = (
+#   os.path.join(BASE_DIR, 'static/'),
+# )
 
-STATIC_ROOT =   os.path.join(BASE_DIR, 'staticfiles/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

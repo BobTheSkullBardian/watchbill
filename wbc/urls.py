@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf import settings
-from django.conf.urls.static import static
+# from django.conf.urls.static import static
 from django.urls import path
 from sailors.views import process
 from events.views import (
     CalendarView,
+    QuickView,
     index,
     login_user,
     logout_user,
@@ -34,4 +35,5 @@ urlpatterns = [
     path('upload/', process, name='process'),
     path('', view=CalendarView.as_view(), name='index'),
     path('calendar/', view=CalendarView.as_view(), name='calendar'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('quickview/', view=QuickView.as_view(), name='quickview'),
+]# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

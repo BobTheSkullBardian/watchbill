@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Event, Position
 from sailors.models import Sailor
 from datetime import date, timedelta
+from django.db.models import Count
 import calendar
 import json
 from collections import defaultdict
@@ -71,18 +72,13 @@ class DayFilter(SimpleListFilter):
             day += self.a_week
 
     def lookups(self, request, model_admin):
-        # dates = []
-        dates = sorted(list(set(event.day for _, event in enumerate(Event.objects.filter(day__gte=self.today)))))
-        for retval in (('day', date, date) for date in dates):
+        events = Event.objects.filter(day__gte=self.today.replace(day=1), day__lte=add_months(self.today, 2)).order_by('day')
+        dates = events.dates('day', 'day')
+        months = events.dates('day', 'month')
+        for retval in (('day', _date, _date.strftime('%d %b')) for _date in dates):
             yield retval
-        months = sorted(list(set(
-            (event.day.year, event.day.month) for _, event in enumerate(
-                Event.objects.filter(day__gte=self.today)))))
-        for retval in (('day__month', month, date(year, month, 1).strftime("%B %Y")) for year, month in months):
+        for retval in (('day__month', _date.month, date(_date.year, _date.month, 1).strftime("%b %y")) for _date in months):
             yield retval
-
-    # def default_value(self):
-        # return self.today
 
     def queryset(self, request, queryset):
         request_GET = request.GET.dict()
@@ -91,6 +87,7 @@ class DayFilter(SimpleListFilter):
         if self.parameter_name in request.GET and request.GET[self.parameter_name] == self.all_value:
             return queryset  #.filter(**request_GET)
 
+        queryset = queryset.filter(day__gte=self.today)
         if self.parameter_name in request.GET:
             return queryset.filter(
                 **{self.parameter_name: request.GET[self.parameter_name]})
@@ -105,12 +102,6 @@ class DayFilter(SimpleListFilter):
                 self.parameter_name: self.all_value}, [self.parameter_name, 'day_gte']),
             'display': _('All'),
         }
-        yield {
-            'selected': self.value() == self.all_value,
-            'query_string': cl.get_query_string({
-                'day__gte': self.today}, [self.parameter_name]),
-            'display': _('Future'),
-        }
         for parameter, lookup, title in self.lookup_choices:
             yield {
                 'selected': self.value() == force_text(lookup),
@@ -120,6 +111,24 @@ class DayFilter(SimpleListFilter):
             }
 
 
+class DaysFilter(SimpleListFilter):
+    title = _('Day ')
+    parameter_name = 'day'
+    
+    def lookups(self, request, model_admin):
+        # filter(day__gte=self.today, day__lte=add_months(self.today, 3)).order_by('day')
+        qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
+        for pk, count in qs.values_list('day').annotate(total=Count('day')).order_by('-total'):
+            if count:
+                yield pk, f'{pk} ({count})'
+
+    def queryset(self, request, queryset):
+        # Apply the filter selected, if any
+        day = self.value()
+        if day:
+            return queryset.filter(day=day)
+
+
 def ack(modeladmin, request, queryset):
     queryset.update(acknowledged=True)
 
@@ -127,13 +136,18 @@ def ack(modeladmin, request, queryset):
 def make_month(modeladmin, request, queryset):
     positions = Position.objects.all()
     # print(positions)
-    month = queryset.first().day.month
-    day = Event.objects.filter(day__month=month-1).order_by('day').last().day
+    day = Event.objects.all().order_by('day').last().day
+    print(day)
+    month = add_months(day, 1).month
+    print(month)
     day += timedelta(days=6)
+    print(day)
     null_stander = Sailor.objects.get(name='Null, Null')
     while day.month == month:
         # print(day)
         for position in positions:
+            if position == 'NPB 306' and day.weekday() in (5, 6):
+                continue
             # print(position)
             events = Event.objects.filter(day=day, position=position)
             if not len(events):
@@ -163,7 +177,7 @@ def show_quickview(modeladmin, request, queryset):
         day = watch.day
         qual = watch.position.qual
         # stander = f'{watch.stander.rate} {watch.stander.name.split(",")[0]}'
-        data[f'{day}'][f'{qual}'].append(watch)
+        data[day][qual].append(watch)
         # # print(watch.day)
         # data[watch.day][watch.position.label].append(watch)
         # for watch in dutyday.watch_set.all():
@@ -172,15 +186,25 @@ def show_quickview(modeladmin, request, queryset):
     #     print(date)
     #     for watch in watches:
     #         print(f'{watch.stander.rate} {watch.stander.name.split(",")[0]}')
-    data = dict(data.items())
-    _data = {}
-    for _day, _quals in data.items():
-         for _qual, _watches in _quals.items():
-            _data[_day] = {_qual: [_watch for _watch in _watches]}
-    # print(json.dumps(data)) 
+    # data = dict(data.items())
+    _data = dict(data)
+    for _day in _data:
+        _data[_day] = dict(data[day])
+    
+    #     for _qual, _watches in _quals.items():
+    #         _data[_day][_qual] = list(_watches)
+
+
+    # for _day, _quals in data.items():
+    #     print(f'day: {_day}\nquals: {_quals}')
+    #     for _qual, _watches in _quals.items():
+    #         print(f'\tqual: {_qual}\n\twatches: {_watches}')
+    #         _data[_day] = {}
+    #         _data[_day][_qual] = [_watch for _watch in _watches]
+    # print(_data)
     return render(
         request, 'quickview.html',
-        {'data': data},
+        {'data': _data},
         # data,
     )
 
@@ -203,6 +227,7 @@ class EventAdmin(admin.ModelAdmin):
         'stander_quald',
         'link_to_stander_avail',
         'notes',
+        'active',
     ]
 
     actions = (
@@ -214,6 +239,7 @@ class EventAdmin(admin.ModelAdmin):
 
     list_filter = [
         DayFilter,
+        # DaysFilter,
         'position__qual',
         # AckFilter,
         'acknowledged',

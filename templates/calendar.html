@@ -1,10 +1,14 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="clearfix">
-	<a class="btn btn-info left" href="{% url 'calendar' %}?{{ prev_month }}"> Previous Month </a>
-	<a class="btn btn-info right" href="{% url 'calendar' %}?{{ next_month }}"> Next Month </a>
+<div class="container">
+	<div class="row">
+		<a class="btn btn-info col" href="{% url 'calendar' %}?{{ prev_month }}"> Previous Month </a>
+		<div class="ack btn col"><span class="float-center">Watch Acknowledged</span></div>
+		<div class="no_qual btn col"><span class='float-center'>Sailor Not Qual'd</span></div>
+		<a class="btn btn-info col" href="{% url 'calendar' %}?{{ next_month }}"> Next Month </a>
+	</div>
+	<div class="row">
+		{{ calendar }}
+	</div>
 </div>
-{{ calendar }}
-<div align='right'><p><b>Watch Acknowledged</b></p><p style='color:red;'>Sailor Not Qual'd</p></div>
 {% endblock %}

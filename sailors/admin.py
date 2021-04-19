@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Sailor
+from .models import Sailor, Qual
 from events.models import Event
+from django.db.models import Count
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
 from django.contrib.admin import SimpleListFilter
@@ -84,6 +85,40 @@ class ActiveFilter(DefaultListFilter):
         return 1
 
 
+class Qual_count(SimpleListFilter):
+    title = 'Watch Qualification'
+    parameter_name = 'qual'
+    
+    def lookups(self, request, model_admin):
+        qs = model_admin.get_queryset(request)
+        for i, qual in enumerate(list(Qual.objects.all())):
+            count = qs.filter(qual=qual).count()
+            if count:
+                yield (i+1, f'{qual} ({count})')
+
+    def queryset(self, request, queryset):
+        # Apply the filter selected, if any
+        qual = self.value()
+        if qual:
+            return queryset.filter(qual=qual)
+
+
+class Quald_count(SimpleListFilter):
+    title = _('Qualified')
+    parameter_name = 'quald'
+    
+    def lookups(self, request, model_admin):
+        qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
+        for pk, count in qs.values_list('quald').annotate(total=Count('quald')).order_by('-total'):
+            if count:
+                yield pk, f'{("No", "Yes")[pk]} ({count})'
+
+    def queryset(self, request, queryset):
+        quald = self.value()
+        if quald:
+            return queryset.filter(quald=quald)    
+
+
 @admin.register(Sailor)
 class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
     actions = ('export',)
@@ -101,23 +136,33 @@ class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
         'availability',
         'notes',
         'get_watches',
+        'watch_count',
+        'dept',
+        'div',
+        'dept_div',
         'dinq_date',
+        # 'off_wb_date',
     )
 
     list_display_links = list_display
 
     list_filter = (
         # 'active',
-        'qual',
-        'quald',
+        # 'qual',
+        Qual_count,
+        Quald_count,
+        # 'quald',
         # 'in_teams',
         ActiveFilter,
+        'dept',
     )
 
     fields = (
         (
             'name',
             'rate',
+            'dept',
+            'div',
         ),
         (
             'phone',
