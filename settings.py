@@ -26,7 +26,7 @@ SECRET_KEY = '!pbcz67!o76%2tk)9d0@nk=lv_t9@&x*grik^vf0vw7l4!x&a+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['8080-blush-eagle-swd44w3i.ws-us03.gitpod.io']
 
 
 # Application definition
