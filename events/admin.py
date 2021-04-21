@@ -45,12 +45,18 @@ class AckFilter(DefaultListFilter):
     def queryset(self, request, queryset):
         # querysey = queryset.filter(day__gte=today)
         if self.parameter_name in request.GET and request.GET[self.parameter_name] == self.all_value:
-            return queryset.filter(day__gte=today)
+            return queryset#.filter(day__gte=today)
 
         if self.parameter_name in request.GET:
-            return queryset.filter(day__gte=today, **{self.parameter_name: request.GET[self.parameter_name]})
+            return queryset.filter(
+                # day__gte=today,
+                **{self.parameter_name: request.GET[self.parameter_name]}
+            )
 
-        return queryset.filter(day__gte=today, **{self.parameter_name: self.default_value()})
+        return queryset.filter(
+            # day__gte=today,
+            **{self.parameter_name: self.default_value()}
+        )
 
 
 class DayFilter(SimpleListFilter):

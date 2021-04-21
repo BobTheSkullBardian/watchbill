@@ -30,7 +30,7 @@ SECRET_KEY = '!pbcz67!o76%2tk)9d0@nk=lv_t9@&x*grik^vf0vw7l4!x&a+'
 DEBUG = True
 # DEBUG = False
 
-ALLOWED_HOSTS = ['34.232.247.167']
+ALLOWED_HOSTS = ['34.232.247.167', '8080-blush-eagle-swd44w3i.ws-us03.gitpod.io']
 # ALLOWED_HOSTS = ['SERVER-IP', 'localhost', '127.0.0.1']
 
 
