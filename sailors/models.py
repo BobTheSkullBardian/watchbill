@@ -94,7 +94,7 @@ class Sailor(models.Model):
     # off_wb_date.empty_value_display = ''
 
     def get_watches(self):
-        return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.all().order_by('day')][-3:]
+        return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.filter(active=True).order_by('day')][-3:]
     get_watches.short_description = "Last 3 Watches"
     get_watches.allow_tags = True
 
@@ -159,8 +159,8 @@ class Sailor(models.Model):
     dept = models.CharField(
         'Department', max_length=2, choices=DEPTS, default="35", null=True, blank=True)
     div = models.CharField(
-        'Division', max_length=10, 
-        # choices=DIVS,
+        'Division', max_length=1, 
+        choices=DIVS,
         blank=True,
         default="")
     phone_regex = RegexValidator(regex=r'^(\d{3}-\d{3}-\d{4})?')
