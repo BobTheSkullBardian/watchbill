@@ -62,6 +62,7 @@ class Sailor(models.Model):
             return self.dept+self.div
         else:
             return self.dept
+    dept_div.admin_order_field = 'dept'
 
     def dinq_date(self):
         if self.quald:
