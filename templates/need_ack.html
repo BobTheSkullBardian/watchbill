@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'cal/css/styles.css' %}">
+    <div class='need_ack'>
+I need the following sailors to acknowledge their watches:
+    <table>
+{% for day, watches in days.items %}
+    <tr>
+        <td align='center'>{{ day }}</td>
+    </tr>
+    {% for watch in watches %}
+    <tr>
+        <td>{{ watch.stander.rate_lname }} / {{ watch.position }} {{ day }}</td>
+    </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+</div>
+{% endblock %}
