@@ -178,10 +178,7 @@ def show_messages(modeladmin, request, queryset):
 
 
 def need_ack(modeladmin, request, queryset):
-    # watches = [watch for watch in queryset]
     days = {day: [*queryset.filter(day=day)] for day in queryset.dates('day', 'day')}
-    # print(data)
-    # print(dir(watches[0]))
     return render(request, 'need_ack.html', {'days': days})
 
 
