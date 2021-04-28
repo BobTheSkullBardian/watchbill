@@ -70,15 +70,17 @@ class DayFilter(SimpleListFilter):
     last_month = add_months(today, -1)
 
     def dutyday(self):
+        today = date.today()
         day = Event.objects.filter(
-            day__gte=self.today,
-            day__lte=self.today + self.a_week).first().day
+            day__gte=today,
+            day__lte=today + self.a_week
+        ).first().day
         while True:
             yield day
             day += self.a_week
 
     def lookups(self, request, model_admin):
-        events = Event.objects.filter(day__gte=self.today.replace(day=1), day__lte=add_months(self.today, 2)).order_by('day')
+        events = Event.objects.filter(day__gte=self.today.replace(day=1), day__lte=add_months(self.today.replace(day=1), 2)).order_by('day')
         dates = events.dates('day', 'day')
         months = events.dates('day', 'month')
         for retval in (('day', _date, _date.strftime('%d %b')) for _date in dates):
@@ -117,22 +119,22 @@ class DayFilter(SimpleListFilter):
             }
 
 
-class DaysFilter(SimpleListFilter):
-    title = _('Day ')
-    parameter_name = 'day'
+# class DaysFilter(SimpleListFilter):
+#     title = _('Day ')
+#     parameter_name = 'day'
     
-    def lookups(self, request, model_admin):
-        # filter(day__gte=self.today, day__lte=add_months(self.today, 3)).order_by('day')
-        qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
-        for pk, count in qs.values_list('day').annotate(total=Count('day')).order_by('-total'):
-            if count:
-                yield pk, f'{pk} ({count})'
+#     def lookups(self, request, model_admin):
+#         # filter(day__gte=self.today, day__lte=add_months(self.today, 3)).order_by('day')
+#         qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
+#         for pk, count in qs.values_list('day').annotate(total=Count('day')).order_by('-total'):
+#             if count:
+#                 yield pk, f'{pk} ({count})'
 
-    def queryset(self, request, queryset):
-        # Apply the filter selected, if any
-        day = self.value()
-        if day:
-            return queryset.filter(day=day)
+#     def queryset(self, request, queryset):
+#         # Apply the filter selected, if any
+#         day = self.value()
+#         if day:
+#             return queryset.filter(day=day)
 
 
 def ack(modeladmin, request, queryset):
