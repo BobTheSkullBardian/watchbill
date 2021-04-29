@@ -149,9 +149,9 @@ class Table(
         events = self.events.filter(day=day).order_by('position__start_time')
         oods = iter(events.filter(position__qual=1))
         joods = iter(events.filter(position__qual=2))
-        dd = events.filter(position__qual=3)#.first()
-        nbp = events.filter(position__qual=4)#.first()
-        times = ['0700', '1900', 'SUPER']
+        dd = events.filter(position__qual=3).first()
+        nbp = events.filter(position__qual=4).first()
+        times = ['SUPER', '0700', '1900']
         weekday = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',)[int(day.strftime("%w"))]
         for i, time in enumerate(times):
             if i == 2:
