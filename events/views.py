@@ -1,4 +1,4 @@
-from .utils import Calendar, Table
+from .utils import Calendar, Table, Quickview
 import calendar
 from .models import Event
 from django.views import generic
@@ -88,10 +88,11 @@ class QuickView(generic.ListView):
         # headers = [u'Date', u'Time']
         # Instantiate our calendar class with today's year and date
         quickview = Table(d.year, d.month)
+        # quickview = Quickview(d.year, d.month)
             # {'headers' : [u'', u'', u'', u'',Calendar(d.year, d.month)
 
         # Call the formatmonth method, which returns our calendar as a table
-        table = quickview.formatmonth(withyear=True)
+        table = quickview.formatmonth()
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
         context['calendar'] = mark_safe(table)
