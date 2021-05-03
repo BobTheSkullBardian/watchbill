@@ -40,7 +40,7 @@ class Calendar(HTMLCalendar):
                 _name =  f'{event.stander.rate_lname()}'
                 if 'Null' in _name:
                     continue
-                status = f'{("no_qual","")[event.stander.quald]} {("", "ack")[event.acknowledged]}'
+                status = f'{("no_qual","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("", "ack")[event.acknowledged]}'
                 d += f'<li class="{status}">{event.position.qual}</br>'
                 d += f'{_name}</li>'  # {event.stander.name.split(",")[0]}</li>'
             d += '</ul>'
@@ -188,7 +188,7 @@ class Table(
                 try:
                     position = nbp
                     name = f'{position.stander.rate_lname()}'
-                    status = f'{("bg-danger","")[position.stander.quald]} {("", "ack")[position.acknowledged]}'
+                    status = f'{("", "ack")[position.acknowledged]}'
                     fields += f'<td class="{status}" rowspan=3>{(name, "")[name[-4:]=="Null"]}</td>'
                 except:
                     # pass
