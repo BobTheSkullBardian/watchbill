@@ -119,121 +119,61 @@ class Quickview():
         
         table += f'<div class="month_label">{self.formatmonthname(date)}</div>'
         for day in days:
-            table += f'{self.formatday(day)}/n'
+            table += f'{self.formatday(day)}\n'
         return table
 
 
 class Table(
     HTMLCalendar
     ):
-    def __init__(self, year=None, month=None, events=None):
+    def __init__(self, year=None, month=None):
         super(Table, self).__init__()
         self.year = year
         self.month = month
-        self.events = events
         self.quals = Qual.objects.all()
         self.positions = Position.objects.all().order_by('start_time')
 
     def formatheaders(self):
-        _headers = '<tr>'# class="top bottom">'
+        row = '<tr>\n'
         headers = [u'Date', u'Time']
         for position in self.quals:
                 headers.append(f'{position}')
         for header in headers:
-            _headers += f'<th scope="col">{header}</th>'
-        _headers += '</tr>'
-        return _headers
+            row += f'\t<th scope="col">{header}</th>\n'
+        row += '</tr>\n'
+        return row
     
     def formatday(self, day):
-        fields = ''
-        events = self.events.filter(day=day).order_by('position__start_time')
-        oods = iter(events.filter(position__qual=1))
-        joods = iter(events.filter(position__qual=2))
-        dd = events.filter(position__qual=3).first()
-        nbp = events.filter(position__qual=4).first()
-        times = ['SUPER', '0700', '1900']
-        weekday = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',)[int(day.strftime("%w"))]
-        for i, time in enumerate(times):
-            if i == 2:
-                fields += f'<tr class="day">'
-            else:
-                fields += f'<tr class="day {("top", "")[bool(i)]}">'
-            fields += f'<td>{(day, weekday, "",)[i]}</td>'
-            fields += f'<td>{times[i]}</td>'
-            try:
-                ood = next(oods)
-                name = f'{ood.stander.rate_lname()}'
-                status = f'{("bg-danger","")[ood.stander.quald]} {("", "ack")[ood.acknowledged]}'
-                fields += f'<td class="{status}">{(name, "")[name[-4:]=="Null"]}</td>'
-            except:
-                fields += f'<td></td>'
-            try:
-                position = next(joods)
-                name = f'{position.stander.rate_lname()}'
-                status = f'{("bg-danger","")[position.stander.quald]} {("", "ack")[position.acknowledged]}'
-                fields += f'<td class="{status}">{(name, "")[name[-4:]=="Null"]}</td>'
-            except:
-                fields += f'<td></td>'
-            # if i == 0:
-            #     continue
-            if i%3 == 0:
+        events = self.events.filter(day=day)
+        data = ''
+        times = [
+            ('0700', '07'),
+            ('1900', '19'),
+            ('SUPER', '00'),
+        ]
+        weekday = (
+            'Sun', 'Mon', 'Tue',
+            'Wed', 'Thu', 'Fri',
+            'Sat',)[int(day.strftime("%w"))]
+        for i, (time_label, time)  in enumerate(times):
+            watches = events.filter(position__start_time__hour=time)
+            data += f'<tr>\n'
+            data += f'\t<td>{(day, weekday, "",)[i]}</td>'
+            data += f'<td>{times[i][0]}</td>'
+            for position in self.quals:
                 try:
-                    position = dd
-                    name = f'{position.stander.rate_lname()}'
-                    status = f'{("bg-danger","")[position.stander.quald]} {("", "ack")[position.acknowledged]}'
-                    fields += f'<td class="{status}" rowspan=3>{(name, "")[name[-4:]=="Null"]}</td>'
+                    watch = watches.get(position__qual=list(self.quals).index(position)+1)
+                    name = f'{watch.stander.rate_lname()}'
+                    status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
+                    data += f'<td class="{status}" {("rowspan=3", "")[i<3]}>{(name, "")[name[-4:]=="Null"]}</td>'
                 except:
-                    pass
-                    # fields += f'<td></td>'
-                try:
-                    position = nbp
-                    name = f'{position.stander.rate_lname()}'
-                    status = f'{("", "ack")[position.acknowledged]}'
-                    fields += f'<td class="{status}" rowspan=3>{(name, "")[name[-4:]=="Null"]}</td>'
-                except:
-                    # pass
-                    fields += f'<td class="fill-blank" rowspan=3></td>'
-                    # fields += f'<td class="blank"></td>'
-            # start_times = events.filter(position=position)
-            # for event in events:
-            #     print(event)
-            # name = f'{position.stander.rate} {(position.stander.name.split(","))[0]}'
-            # status = f'{("no_qual","")[position.stander.quald]} {("", "ack")[position.acknowledged]}'
-            # fields += '<td></td>'*(list(self.quals).index(position.position.qual)-1)
-            # fields += f'<td class="{status}">{(name, "")[name[-4:]=="Null"]}</td>'
-            fields += '</tr>'
-        # for event in events:
-            # print(f'event: {dir(event.position.start_time)}')
-    # formats a day as a td
-    # filter events by day
-    # def formatday(self, day, weekday, events):
-    #     if day == 0:
-    #         return '<td><span class="noday">&nbsp;</span></td>'
-    #     events_per_day = events.filter(day__day=day, active=True)
-    #     times = defaultdict(list)
-    #     for event in events_per_day:
-    #         times[(event.day, event.position.start_time)].append(event)
-    #     d = ''
-    #     for (_d, _t), events in sorted(times.items()):
-    #         d += f'<li>{_t.strftime("%H%M")}<ul>'
-    #         for event in events:
-    #             status = f'{("no_qual","")[event.stander.quald]} {("", "ack")[event.acknowledged]}'
-    #             d += f'<li class="{status}">{event.position}</br>'
-    #             d += f'{event.stander.rate} {event.stander.name.split(",")[0]}</li>'
-    #         d += '</ul>'
-    #     return f'<td><span class="date">{day}</span><ul> {d} </ul></td>'
+                    if str(position) in ("OOD", "JOOD"):
+                        data += f'<td class="bg-warning"></td>\n'
+                    # else:
+                        # data += f'<td></td>'
+            data += '</tr>\n'
+        return data
 
-    # # formats a week as a tr
-    # def formatweek(self, theweek, events):
-    #     week = ''
-    #     for d, weekday in theweek:
-    #         week += self.formatday(d, weekday, events)
-    #     return f'<tr>{week}</tr>'
-
-    # # formats a month as a table
-    # # filter events by year and month
-        return fields
-        
 
     def formatmonth(self, withyear=True):
         self.events = Event.objects.filter(
@@ -242,20 +182,14 @@ class Table(
             active=True,
         ).order_by('day')
         days = self.events.dates('day', 'day') #set([event.day for event in events])
-        # table = '<div class="quickview">'
-        
-        # table += '<div class="month_label">'
-        # table += 'MONTH'
-        # table += '<div>'
-        # return table
         cal = '<table cellpadding="0" cellspacing="0" class="table table-sm table-bordered">\n'
         
-        cal += f'<thead>{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
+        cal += f'<thead class="thead-dark">{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
         cal += f'{self.formatheaders()}</thead>\n'
         for day in days:
-            cal += f'{self.formatday(day)}\n'
+            cal += f'{self.formatday(day)}'
         cal += '</table>'
-        # print(f'cal: {cal}')
+        print(cal)
         return cal
 
 
