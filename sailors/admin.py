@@ -8,6 +8,14 @@ from django.contrib.admin import SimpleListFilter
 from django.http import HttpResponse
 import csv
 
+def ack(modeladmin, request, queryset):
+    message = "JUN ack'd"
+    for obj in queryset:
+        notes = obj.notes
+        if message not in notes:
+            obj.notes = message+f'{(""," // ")[len(notes) > 0]}{notes}'
+            obj.save()
+ack.short_description = "Ack'd Jun Message"
 
 class WatchInline(admin.StackedInline):
     model = Event
@@ -121,7 +129,10 @@ class Quald_count(SimpleListFilter):
 
 @admin.register(Sailor)
 class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
-    actions = ('export',)
+    actions = (
+        'export',
+        ack,
+        )
 
     inlines = (WatchInline,)
 
