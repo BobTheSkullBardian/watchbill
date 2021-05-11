@@ -79,7 +79,7 @@ class Sailor(models.Model):
 
         else:
             return None
-    dinq_date.admin_order_field = 'report'
+    dinq_date.admin_order_field = 'qualdate'
 
     def off_wb_date(self):
         today = date.today()
@@ -176,11 +176,13 @@ class Sailor(models.Model):
         max_length=5, default="")
     report = models.DateField("Report Date", null=True, blank=True)
     qualdate = models.DateField("Date Qual'd", null=True, blank=True)
+    coversheet = models.BooleanField('Cover Sheet Uploaded', default=False)
     notes = models.CharField('Notes',
         max_length=100,
         default="", blank=True)
     availability = models.CharField(
         'Availability', max_length=100, default="", blank=True)
+    
 
 
 class Qual(models.Model):

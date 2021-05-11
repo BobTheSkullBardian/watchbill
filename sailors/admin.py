@@ -166,6 +166,7 @@ class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
         # 'in_teams',
         ActiveFilter,
         'dept',
+        'coversheet',
     )
 
     fields = (
@@ -188,7 +189,10 @@ class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
             'notes',
         ),
         'qual',
-        'quald',
+        (
+            'quald',
+            'coversheet',
+        ),
         (
             'qualdate',
             'report',
