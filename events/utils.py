@@ -189,7 +189,7 @@ class Table(
         for day in days:
             cal += f'{self.formatday(day)}'
         cal += '</table>'
-        print(cal)
+        # print(cal)
         return cal
 
 

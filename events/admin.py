@@ -145,11 +145,11 @@ def make_month(modeladmin, request, queryset):
     positions = Position.objects.all()
     # print(positions)
     day = Event.objects.all().order_by('day').last().day
-    print(day)
+    # print(day)
     month = add_months(day, 1).month
-    print(month)
+    # print(month)
     day += timedelta(days=6)
-    print(day)
+    # print(day)
     null_stander = Sailor.objects.get(name='Null, Null')
     while day.month == month:
         # print(day)

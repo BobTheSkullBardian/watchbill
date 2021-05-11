@@ -17,7 +17,7 @@ from datetime import (
 
 
 def index(request):
-    print(request)
+    # print(request)
     return render(request, 'calendar.html', {})
 
 

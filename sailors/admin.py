@@ -1,12 +1,16 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Sailor, Qual
 from events.models import Event
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
 from django.contrib.admin import SimpleListFilter
 from django.http import HttpResponse
 import csv
+from datetime import date, timedelta
+
+admin.site.unregister(Group)
 
 def ack(modeladmin, request, queryset):
     message = "JUN ack'd"
@@ -129,6 +133,55 @@ class Quald_count(SimpleListFilter):
 
 @admin.register(Sailor)
 class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            _watch_count=Count(
+                "event",
+                # filter=Q(
+                    # event__active=True,
+                    # event__day__gte=(date.today()-timedelta(days=100))
+                # ) & ~Q(
+                    # event__position__label="Super",
+                # ),
+            ),
+        )
+        return queryset
+
+    def get_watches(self, obj):
+        today = date.today()
+        delta = timedelta(days = 100)
+        start = today - delta
+        events = obj.event_set.filter(
+            day__gte=start,
+            active=True,
+        # ).exclude(
+            # position__label="Super",
+        ).order_by(
+            'day',
+        )
+        watches = [
+            f'{watch.day.strftime("%d%b")} {watch.position}' for watch in events
+        ]#[-3:]
+        return watches #[f'{watch.day.strftime("%d%b")} {watch.position}' for watch in obj.event_set.filter(active=True).order_by('day')]#[-3:]
+    get_watches.short_description = "Watch History"
+    get_watches.allow_tags = True
+
+    def watch_count(self, obj):
+        today = date.today()
+        delta = timedelta(days = 100)
+        start = today - delta
+        watches = obj.event_set.filter(
+            day__gte=start,
+            active=True,
+        ).exclude(
+            position__label="Super",
+        )
+        count = watches.count()
+        return count
+    # watch_count.short_description = "Watch Count"
+    watch_count.admin_order_field = '_watch_count'
+
     actions = (
         'export',
         ack,

@@ -72,7 +72,7 @@ class Position(models.Model):
                     )
 
     def __str__(self):
-        return f'{self.qual} {self.label}'
+        return f'{self.qual}{("", f" {self.label}")[len(self.label)>0]}'
 
     def __retr__(self):
         return self

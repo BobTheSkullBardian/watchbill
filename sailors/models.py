@@ -94,19 +94,20 @@ class Sailor(models.Model):
     off_wb_date.short_description = 'Months left on WB'
     # off_wb_date.empty_value_display = ''
 
-    def get_watches(self):
-        return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.filter(active=True).order_by('day')][-3:]
-    get_watches.short_description = "Last 3 Watches"
-    get_watches.allow_tags = True
+    # def get_watches(self):
+    #     return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.filter(active=True).order_by('day')][-3:]
+    # get_watches.short_description = "Last 3 Watches"
+    # get_watches.allow_tags = True
 
-    def watch_count(self):
-        today = date.today()
-        delta = timedelta(days = 100)
-        start = today - delta
-        watches = self.event_set.filter(day__gte=start, active=True)
-        return len(watches)
-    watch_count.short_description = "100 day watch #"
-    watch_count.allow_tags = True
+    # def watch_count(self):
+    #     today = date.today()
+    #     delta = timedelta(days = 100)
+    #     start = today - delta
+    #     watches = self.event_set.filter(day__gte=start, active=True)
+    #     return len(watches)
+    # watch_count.short_description = "100 day watch #"
+    # # watch_count.admin_order_field = 'watch_count'
+    # watch_count.allow_tags = True
         
     DEPTS = (
         ('31', '31'),
