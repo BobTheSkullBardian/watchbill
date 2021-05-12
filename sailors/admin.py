@@ -1,14 +1,14 @@
+from datetime import date, timedelta
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import Group
-from django.db.models import Count, Q
+from django.db.models import Count  # , Q
+from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
-from django.contrib.admin import SimpleListFilter
-from django.http import HttpResponse
 from .models import Sailor, Qual
 from events.models import Event
 import csv
-from datetime import date, timedelta
 
 admin.site.unregister(Group)
 
@@ -21,6 +21,7 @@ admin.site.unregister(Group)
 #             obj.notes = notes[4:]
 #             obj.save()
 # ack.short_description = "Ack'd Jun Message"
+
 
 class WatchInline(admin.StackedInline):
     model = Event
@@ -100,13 +101,13 @@ class ActiveFilter(DefaultListFilter):
 class Qual_count(SimpleListFilter):
     title = 'Watch Qualification'
     parameter_name = 'qual'
-    
+
     def lookups(self, request, model_admin):
         qs = model_admin.get_queryset(request)
         for i, qual in enumerate(list(Qual.objects.all())):
             count = qs.filter(qual=qual).count()
             if count:
-                yield (i+1, f'{qual} ({count})')
+                yield (i + 1, f'{qual} ({count})')
 
     def queryset(self, request, queryset):
         # Apply the filter selected, if any
@@ -118,9 +119,9 @@ class Qual_count(SimpleListFilter):
 class Quald_count(SimpleListFilter):
     title = _('Qualified')
     parameter_name = 'quald'
-    
+
     def lookups(self, request, model_admin):
-        qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
+        qs = model_admin.get_queryset(request)  # .filter(**request.GET.dict())
         for pk, count in qs.values_list('quald').annotate(total=Count('quald')).order_by('-total'):
             if count:
                 yield pk, f'{("No", "Yes")[pk]} ({count})'
@@ -128,7 +129,7 @@ class Quald_count(SimpleListFilter):
     def queryset(self, request, queryset):
         quald = self.value()
         if quald:
-            return queryset.filter(quald=quald)    
+            return queryset.filter(quald=quald)
 
 
 @admin.register(Sailor)
@@ -139,10 +140,10 @@ class SailorAdmin(admin.ModelAdmin):
             _watch_count=Count(
                 "event",
                 # filter=Q(
-                    # event__active=True,
-                    # event__day__gte=(date.today()-timedelta(days=100))
+                #     event__active=True,
+                #     event__day__gte=(date.today()-timedelta(days=100))
                 # ) & ~Q(
-                    # event__position__label="Super",
+                #     event__position__label="Super",
                 # ),
             ),
         )
@@ -150,26 +151,26 @@ class SailorAdmin(admin.ModelAdmin):
 
     def get_watches(self, obj):
         today = date.today()
-        delta = timedelta(days = 100)
+        delta = timedelta(days=100)
         start = today - delta
         events = obj.event_set.filter(
             day__gte=start,
             active=True,
-        # ).exclude(
-            # position__label="Super",
+            # ).exclude(
+            #     position__label="Super",
         ).order_by(
-            'day',
+            '-day',
         )
         watches = [
             f'{watch.day.strftime("%d%b")} {watch.position}' for watch in events
-        ]#[-3:]
-        return watches #[f'{watch.day.strftime("%d%b")} {watch.position}' for watch in obj.event_set.filter(active=True).order_by('day')]#[-3:]
+        ]
+        return watches  # [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in obj.event_set.filter(active=True).order_by('day')]#[-3:]
     get_watches.short_description = "Watch History"
     get_watches.allow_tags = True
 
     def watch_count(self, obj):
         today = date.today()
-        delta = timedelta(days = 100)
+        delta = timedelta(days=100)
         start = today - delta
         watches = obj.event_set.filter(
             day__gte=start,
@@ -185,7 +186,7 @@ class SailorAdmin(admin.ModelAdmin):
     actions = (
         export_selected_sailors,
         # ack,
-        )
+    )
 
     inlines = (WatchInline,)
 

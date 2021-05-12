@@ -1,5 +1,6 @@
 from calendar import HTMLCalendar, SUNDAY
 from collections import defaultdict
+from django.core.exceptions import MultipleObjectsReturned
 from datetime import (
     # datetime as dtime,
     date,
@@ -165,11 +166,13 @@ class Table(
                     name = f'{watch.stander.rate_lname()}'
                     status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
                     data += f'<td class="{status}" {("rowspan=3", "")[i<3]}>{(name, "")[name[-4:]=="Null"]}</td>'
-                except:
-                    if str(position) in ("OOD", "JOOD"):
+                except Event.DoesNotExist:
+                    if str(position) in ("OOD", "JOOD"):  # or not i % 3 or (str(position) == "NBP 306" and weekday not in ["Sun", "Sat"]):
                         data += '<td class="bg-warning"></td>\n'
+                except MultipleObjectsReturned:
+                    data += '<td class="bg-warning">MULTIPLE ENTRIES</td>\n'
                     # else:
-                        # data += f'<td></td>'
+                    #     data += f'<td></td>'
             data += '</tr>\n'
         return data
 

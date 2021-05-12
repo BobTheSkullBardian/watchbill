@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.urls import reverse
 from datetime import date, timedelta
 from string import ascii_uppercase
+import calendar
 
 
 def add_months(sourcedate, months):
@@ -11,6 +12,7 @@ def add_months(sourcedate, months):
     month = month % 12 + 1
     day = min(sourcedate.day, calendar.monthrange(year, month)[1])
     return date(year, month, day)
+
 
 def create_sailor(data):
     try:
@@ -56,10 +58,10 @@ class Sailor(models.Model):
 
     def quals(self):
         return [str(q) for q in self.qual.all()]
-    
+
     def dept_div(self):
         if self.div:
-            return self.dept+self.div
+            return self.dept + self.div
         else:
             return self.dept
     dept_div.admin_order_field = 'dept'
@@ -86,9 +88,9 @@ class Sailor(models.Model):
         if not all((self.quald, self.qualdate)):
             return
         else:
-            delta = timedelta(days = 365)
+            # delta = timedelta(days=365)
             done = self.qualdate.replace(day=1, year=self.qualdate.year + 1)
-            months = round((done - today.replace(day=1)).days/30)
+            months = round((done - today.replace(day=1)).days / 30)
             return f'{months}'
     off_wb_date.admin_order_field = 'qualdate'
     off_wb_date.short_description = 'Months left on WB'
@@ -121,8 +123,8 @@ class Sailor(models.Model):
         (
             y, y
             # x[0] + y, x[0] + y
-        ) 
-        # for x in DEPTS 
+        )
+        # for x in DEPTS
         for y in [
             '',
             *list(ascii_uppercase)[:5]
@@ -161,7 +163,7 @@ class Sailor(models.Model):
     dept = models.CharField(
         'Department', max_length=2, choices=DEPTS, default="35", null=True, blank=True)
     div = models.CharField(
-        'Division', max_length=1, 
+        'Division', max_length=1,
         choices=DIVS,
         blank=True,
         default="")

@@ -1,5 +1,11 @@
-from django.shortcuts import render, redirect
-from sailors.models import Sailor, create_sailor
+from django.shortcuts import (
+    # render,
+    redirect,
+)
+from sailors.models import (
+    # Sailor,
+    create_sailor,
+)
 import os
 
 
