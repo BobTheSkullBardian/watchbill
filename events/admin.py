@@ -137,7 +137,7 @@ class DayFilter(SimpleListFilter):
 #             return queryset.filter(day=day)
 
 
-def ack(modeladmin, request, queryset):
+def ack_watch(modeladmin, request, queryset):
     queryset.update(acknowledged=True)
 
 
@@ -247,7 +247,7 @@ class EventAdmin(admin.ModelAdmin):
         show_messages,
         show_quickview,
         need_ack,
-        ack,
+        ack_watch,
         make_month,
     )
 
