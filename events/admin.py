@@ -2,20 +2,20 @@ from django.contrib import admin
 from .models import Event, Position
 from sailors.models import Sailor
 from datetime import date, timedelta
-from django.db.models import Count
+# from django.db.models import Count
 import calendar
-import json
+# import json
 from collections import defaultdict
 from django.urls import reverse
 from django.utils.html import format_html
 from django.shortcuts import (
     render,
-    redirect,
+    # redirect,
 )
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
 from django.contrib.admin import SimpleListFilter
-from django.http import QueryDict
+# from django.http import QueryDict
 from sailors.admin import DefaultListFilter
 
 
@@ -40,12 +40,12 @@ class AckFilter(DefaultListFilter):
         )
 
     def default_value(self):
-        return all_value
+        return self.all_value
 
     def queryset(self, request, queryset):
         # querysey = queryset.filter(day__gte=today)
         if self.parameter_name in request.GET and request.GET[self.parameter_name] == self.all_value:
-            return queryset#.filter(day__gte=today)
+            return queryset  # .filter(day__gte=today)
 
         if self.parameter_name in request.GET:
             return queryset.filter(
@@ -93,7 +93,7 @@ class DayFilter(SimpleListFilter):
         if 'day' in request_GET and 'day__gte' in request_GET:
             request_GET.pop('day__gte')
         if self.parameter_name in request.GET and request.GET[self.parameter_name] == self.all_value:
-            return queryset  #.filter(**request_GET)
+            return queryset  # .filter(**request_GET)
 
         queryset = queryset.filter(day__gte=self.today)
         if self.parameter_name in request.GET:
@@ -101,7 +101,7 @@ class DayFilter(SimpleListFilter):
                 **{self.parameter_name: request.GET[self.parameter_name]})
         return queryset.filter(
             # **{self.parameter_name: self.default_value()},
-            )
+        )
 
     def choices(self, cl):
         yield {
@@ -122,7 +122,7 @@ class DayFilter(SimpleListFilter):
 # class DaysFilter(SimpleListFilter):
 #     title = _('Day ')
 #     parameter_name = 'day'
-    
+
 #     def lookups(self, request, model_admin):
 #         # filter(day__gte=self.today, day__lte=add_months(self.today, 3)).order_by('day')
 #         qs = model_admin.get_queryset(request)#.filter(**request.GET.dict())
@@ -203,10 +203,9 @@ def show_quickview(modeladmin, request, queryset):
     _data = dict(data)
     for _day in _data:
         _data[_day] = dict(data[day])
-    
+
     #     for _qual, _watches in _quals.items():
     #         _data[_day][_qual] = list(_watches)
-
 
     # for _day, _quals in data.items():
     #     print(f'day: {_day}\nquals: {_quals}')

@@ -42,7 +42,7 @@ class Event(models.Model):
     def popups(self):
         # print(dir(self))
         pass
-    
+
     day = models.DateField(
         u'Day of the Watch', help_text=u'Day of the Watch')
     position = models.ForeignKey(

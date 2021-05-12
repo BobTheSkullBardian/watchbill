@@ -1,25 +1,26 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Sailor, Qual
-from events.models import Event
 from django.db.models import Count, Q
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
 from django.contrib.admin import SimpleListFilter
 from django.http import HttpResponse
+from .models import Sailor, Qual
+from events.models import Event
 import csv
 from datetime import date, timedelta
 
 admin.site.unregister(Group)
 
-def ack(modeladmin, request, queryset):
-    message = "JUN ack'd"
-    for obj in queryset:
-        notes = obj.notes
-        if message not in notes:
-            obj.notes = message+f'{(""," // ")[len(notes) > 0]}{notes}'
-            obj.save()
-ack.short_description = "Ack'd Jun Message"
+# def ack(modeladmin, request, queryset):
+#     message = "JUN ack'd"
+#     for obj in queryset:
+#         notes = obj.notes
+#         # print(f'{obj},{notes[0:4]},{notes[0:4]==" // "}')
+#         if notes and notes[0:4] == " // ":
+#             obj.notes = notes[4:]
+#             obj.save()
+# ack.short_description = "Ack'd Jun Message"
 
 class WatchInline(admin.StackedInline):
     model = Event
@@ -56,31 +57,30 @@ class DefaultListFilter(SimpleListFilter):
             }
 
 
-class ExportMixin:
-    def export(self, request, queryset):
-        filename = 'WB_Roster'
-        meta = self.model._meta
-        field_names = [field.name for field in meta.get_fields()]
-        field_names.pop(field_names.index('id'))
-        field_names.pop(field_names.index('event'))
-        field_names.pop(field_names.index('qual'))
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename={filename}.csv'.format(meta)
-        writer = csv.writer(response)
-        header_row = [name.capitalize() for name in field_names]
-        qualdate_index = header_row.index("Qualdate")
-        header_row.insert(qualdate_index + 1, "Quals")
-        header_row.insert(qualdate_index + 2, "Dinq")
-        header_row.insert(len(header_row), "Watches")
-        writer.writerow(header_row)
-        for obj in queryset:
-            row = [getattr(obj, field) for field in field_names]
-            row.insert(header_row.index("Quals"), ", ".join(obj.quals()))
-            row.insert(header_row.index("Watches"), ", ".join(obj.get_watches()))
-            row.insert(header_row.index("Dinq"), obj.dinq_date())
-            writer.writerow(row)
-        return response
-    export.short_description = "Export Selected"
+def export_selected_sailors(self, request, queryset):
+    filename = 'WB_Roster'
+    meta = self.model._meta
+    field_names = [field.name for field in meta.get_fields()]
+    field_names.pop(field_names.index('id'))
+    field_names.pop(field_names.index('event'))
+    field_names.pop(field_names.index('qual'))
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename={filename}.csv'.format(meta)
+    writer = csv.writer(response)
+    header_row = [name.capitalize() for name in field_names]
+    qualdate_index = header_row.index("Qualdate")
+    header_row.insert(qualdate_index + 1, "Quals")
+    header_row.insert(qualdate_index + 2, "Dinq")
+    header_row.insert(len(header_row), "Watches")
+    writer.writerow(header_row)
+    for obj in queryset:
+        row = [getattr(obj, field) for field in field_names]
+        row.insert(header_row.index("Quals"), ", ".join(obj.quals()))
+        row.insert(header_row.index("Watches"), ", ".join(obj.get_watches()))
+        row.insert(header_row.index("Dinq"), obj.dinq_date())
+        writer.writerow(row)
+    return response
+# export_selected.short_description = "Export Selected Sailors"
 
 
 class ActiveFilter(DefaultListFilter):
@@ -132,7 +132,7 @@ class Quald_count(SimpleListFilter):
 
 
 @admin.register(Sailor)
-class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
+class SailorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         queryset = queryset.annotate(
@@ -183,8 +183,8 @@ class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
     watch_count.admin_order_field = '_watch_count'
 
     actions = (
-        'export',
-        ack,
+        export_selected_sailors,
+        # ack,
         )
 
     inlines = (WatchInline,)
@@ -219,7 +219,7 @@ class SailorAdmin(admin.ModelAdmin, ExportMixin):  # , RelatedObjectLinkMixin,):
         # 'in_teams',
         ActiveFilter,
         'dept',
-        'coversheet',
+        # 'coversheet',
     )
 
     fields = (

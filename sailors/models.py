@@ -108,7 +108,7 @@ class Sailor(models.Model):
     # watch_count.short_description = "100 day watch #"
     # # watch_count.admin_order_field = 'watch_count'
     # watch_count.allow_tags = True
-        
+
     DEPTS = (
         ('31', '31'),
         ('32', '32'),
@@ -118,7 +118,7 @@ class Sailor(models.Model):
     )
 
     DIVS = [
-        ( 
+        (
             y, y
             # x[0] + y, x[0] + y
         ) 
@@ -178,12 +178,12 @@ class Sailor(models.Model):
     report = models.DateField("Report Date", null=True, blank=True)
     qualdate = models.DateField("Date Qual'd", null=True, blank=True)
     coversheet = models.BooleanField('Cover Sheet Uploaded', default=False)
-    notes = models.CharField('Notes',
+    notes = models.CharField(
+        'Notes',
         max_length=100,
         default="", blank=True)
     availability = models.CharField(
         'Availability', max_length=100, default="", blank=True)
-    
 
 
 class Qual(models.Model):
