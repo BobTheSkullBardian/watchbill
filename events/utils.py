@@ -157,22 +157,19 @@ class Table(
             'Sat',)[int(day.strftime("%w"))]
         for i, (time_label, time) in enumerate(times):
             watches = events.filter(position__start_time__hour=time)
-            data += '<tr>\n'
+            style = ('class="table-secondary"', '')[day >= date.today()]
+            data += f'<tr {style}>\n'
             data += f'\t<td>{(day, weekday, "",)[i]}</td>'
             data += f'<td>{times[i][0]}</td>'
             for position in self.quals:
-                try:
-                    watch = watches.get(position__qual=list(self.quals).index(position) + 1)
+                _watches = watches.filter(position__qual=list(self.quals).index(position) + 1)
+                # warn = ('bg-warning', '')[len(_watches) > 0]
+                data += f'<td {("rowspan=3", "")[i<3]} class={("bg-danger font-grey", "")[len(_watches) > 0 or str(position) in ("NBP 306", "Duty Driver")]}>'
+                for watch in _watches:
                     name = f'{watch.stander.rate_lname()}'
                     status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
-                    data += f'<td class="{status}" {("rowspan=3", "")[i<3]}>{(name, "")[name[-4:]=="Null"]}</td>'
-                except Event.DoesNotExist:
-                    if str(position) in ("OOD", "JOOD"):  # or not i % 3 or (str(position) == "NBP 306" and weekday not in ["Sun", "Sat"]):
-                        data += '<td class="bg-warning"></td>\n'
-                except MultipleObjectsReturned:
-                    data += '<td class="bg-warning">MULTIPLE ENTRIES</td>\n'
-                    # else:
-                    #     data += f'<td></td>'
+                    data += f'<span class="{status}" >{(name, "")[name[-4:]=="Null"]}</span></br>'
+                data += '</td>\n'
             data += '</tr>\n'
         return data
 
@@ -183,7 +180,7 @@ class Table(
             active=True,
         ).order_by('day')
         days = self.events.dates('day', 'day')  # set([event.day for event in events])
-        cal = '<table cellpadding="0" cellspacing="0" class="table table-sm table-bordered">\n'
+        cal = '<table cellpadding="0" cellspacing="0" class="table table-sm table-bordered table-striped">\n'
 
         cal += f'<thead class="thead-dark">{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
         cal += f'{self.formatheaders()}</thead>\n'
