@@ -215,11 +215,11 @@ class SailorAdmin(admin.ModelAdmin):
         # 'active',
         # 'qual',
         Qual_count,
-        Quald_count,
-        # 'quald',
-        # 'in_teams',
+        # Quald_count,
+        'quald',
         ActiveFilter,
         'dept',
+        'in_teams',
         # 'coversheet',
     )
 

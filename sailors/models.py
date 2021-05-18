@@ -174,9 +174,10 @@ class Sailor(models.Model):
     email = models.EmailField('Email', max_length=50, default="", blank=True)
     work_email = models.EmailField(
         'Professional Email', max_length=50, null=True, blank=True)
-    in_teams = models.CharField(
+    teams_type = models.CharField(
         'Teams Access', choices=[('CVR', 'CVR'), ('Guest', 'Guest')],
         max_length=5, default="")
+    in_teams = models.BooleanField("In Teams", default=False)
     report = models.DateField("Report Date", null=True, blank=True)
     qualdate = models.DateField("Date Qual'd", null=True, blank=True)
     coversheet = models.BooleanField('Cover Sheet Uploaded', default=False)
