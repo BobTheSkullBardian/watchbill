@@ -174,7 +174,7 @@ def make_month(modeladmin, request, queryset):
 
 
 def show_messages(modeladmin, request, queryset):
-    watches = [watch for watch in queryset]
+    watches = (watch for watch in queryset)
     # print(dir(watches[0]))
     return render(request, 'recall.html', {'watches': watches})
 
@@ -228,7 +228,7 @@ def show_quickview(modeladmin, request, queryset):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = (
         'day',
         # 'day_weekday',
         # 'get_pos_label',
@@ -240,7 +240,7 @@ class EventAdmin(admin.ModelAdmin):
         'link_to_stander_avail',
         'notes',
         'active',
-    ]
+    )
 
     actions = (
         show_messages,
@@ -250,7 +250,7 @@ class EventAdmin(admin.ModelAdmin):
         make_month,
     )
 
-    list_filter = [
+    list_filter = (
         DayFilter,
         # DaysFilter,
         'position__qual',
@@ -258,15 +258,15 @@ class EventAdmin(admin.ModelAdmin):
         'acknowledged',
         'stander__quald',
         'active',
-    ]
+    )
 
-    fields = [
+    fields = (
         'active',
         ('day', 'position',),
         'stander',
         'notes',
         'acknowledged',
-    ]
+    )
 
     list_display_links = (
         'day',
@@ -295,3 +295,6 @@ class EventAdmin(admin.ModelAdmin):
     stander_quald.short_description = 'Qual\'d'
     stander_quald.admin_order_field = 'stander__quald'
     stander_quald.boolean = True
+
+    def has_delete_permission(self, request, obj=None):
+        return False
