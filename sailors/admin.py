@@ -15,22 +15,53 @@ admin.site.unregister(Group)
 
 # @admin.site.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
-    readonly_fields = (
-        'content_type',
-        'user',
+    # print(dir(LogEntry))
+    list_display = (
         'action_time',
-        'object_id',
         'object_repr',
+        'user',
+        'content_type',
+        # 'object_id',
         'action_flag',
         'change_message',
     )
 
+    list_filter = (
+        'user',
+        'content_type',
+        'action_flag',
+    )    
+
+    readonly_fields = (
+        'object_repr',
+        'content_type',
+        'user',
+        'action_time',
+        # 'object_id',
+        'action_flag',
+        'change_message',
+    )
+
+    fields = (
+        (
+            'object_repr',
+            'content_type',
+        ),
+        'user',
+        'action_time',
+        # 'object_id',
+        'action_flag',
+        'change_message',
+    )
     def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
         return False
 
     def get_actions(self, request):
         actions = super(LogEntryAdmin, self).get_actions(request)
-        del actions['delete_selected']
+        # del actions['delete_selected']
         return actions
 admin.site.register(LogEntry, LogEntryAdmin)
 
