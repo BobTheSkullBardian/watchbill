@@ -13,9 +13,13 @@ import csv
 
 admin.site.unregister(Group)
 
-# @admin.site.register(LogEntry)
+
+# @admin.register(Qual)
+# class QualAdmin(admin.ModelAdmin):
+#     pass
+
+
 class LogEntryAdmin(admin.ModelAdmin):
-    # print(dir(LogEntry))
     list_display = (
         'action_time',
         'object_repr',
@@ -30,7 +34,7 @@ class LogEntryAdmin(admin.ModelAdmin):
         'user',
         'content_type',
         'action_flag',
-    )    
+    )
 
     readonly_fields = (
         'object_repr',
@@ -53,6 +57,7 @@ class LogEntryAdmin(admin.ModelAdmin):
         'action_flag',
         'change_message',
     )
+
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -63,12 +68,14 @@ class LogEntryAdmin(admin.ModelAdmin):
         actions = super(LogEntryAdmin, self).get_actions(request)
         # del actions['delete_selected']
         return actions
+
+
 admin.site.register(LogEntry, LogEntryAdmin)
 
 
 class WatchInline(admin.StackedInline):
     model = Event
-
+    ordering = ("-day",)
 
 class DefaultListFilter(SimpleListFilter):
     all_value = '_all'
@@ -172,18 +179,6 @@ def export_selected_sailors(self, request, queryset):
         row.insert(header_row.index("Dinq"), obj.dinq_date())
         writer.writerow(row)
     return response
-# export_selected.short_description = "Export Selected Sailors"
-
-
-# def ack(modeladmin, request, queryset):
-#     message = "JUN ack'd"
-#     for obj in queryset:
-#         notes = obj.notes
-#         # print(f'{obj},{notes[0:4]},{notes[0:4]==" // "}')
-#         if notes and notes[0:4] == " // ":
-#             obj.notes = notes[4:]
-#             obj.save()
-# ack.short_description = "Ack'd Jun Message"
 
 
 @admin.register(Sailor)
@@ -193,12 +188,6 @@ class SailorAdmin(admin.ModelAdmin):
         queryset = queryset.annotate(
             _watch_count=Count(
                 "event",
-                # filter=Q(
-                #     event__active=True,
-                #     event__day__gte=(date.today()-timedelta(days=100))
-                # ) & ~Q(
-                #     event__position__label="Super",
-                # ),
             ),
         )
         return queryset
@@ -307,8 +296,3 @@ class SailorAdmin(admin.ModelAdmin):
         ),
         'active',
     )
-
-
-# @admin.register(Qual)
-# class QualAdmin(admin.ModelAdmin):
-#     pass

@@ -1,6 +1,6 @@
 from calendar import HTMLCalendar, SUNDAY
 from collections import defaultdict
-from django.core.exceptions import MultipleObjectsReturned
+# from django.core.exceptions import MultipleObjectsReturned
 from datetime import (
     # datetime as dtime,
     date,
