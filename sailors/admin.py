@@ -173,12 +173,12 @@ def export_selected_sailors(self, request, queryset):
     qualdate_index = header_row.index("Qualdate")
     header_row.insert(qualdate_index + 1, "Quals")
     header_row.insert(qualdate_index + 2, "Dinq")
-    header_row.insert(len(header_row), "Watches")
+    # header_row.insert(len(header_row), "Watches")
     writer.writerow(header_row)
     for obj in queryset:
         row = [getattr(obj, field) for field in field_names]
         row.insert(header_row.index("Quals"), ", ".join(obj.quals()))
-        row.insert(header_row.index("Watches"), ", ".join(obj.get_watches()))
+        # row.insert(header_row.index("Watches"), ", ".join(obj.get_watches()))
         row.insert(header_row.index("Dinq"), obj.dinq_date())
         writer.writerow(row)
     return response
