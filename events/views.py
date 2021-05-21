@@ -1,7 +1,7 @@
 from .utils import (
     Calendar,
-    Table,
-    # Quickview,
+    # Table,
+    Quickview,
 )
 import calendar
 from .models import Event
@@ -91,7 +91,7 @@ class QuickView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
         # headers = [u'Date', u'Time']
         # Instantiate our calendar class with today's year and date
-        quickview = Table(d.year, d.month)
+        quickview = Quickview(d.year, d.month)
         # quickview = Quickview(d.year, d.month)
         #     {'headers' : [u'', u'', u'', u'',Calendar(d.year, d.month)
 

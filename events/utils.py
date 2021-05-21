@@ -71,63 +71,63 @@ class Calendar(HTMLCalendar):
         return cal
 
 
-class Quickview():
-    def __init__(self, year=None, month=None, events=None):
-        super(Quickview, self).__init__()
-        self.year = year
-        self.month = month
-        self.events = events
-        self.quals = Qual.objects.all()
-        self.positions = Position.objects.all().order_by('start_time')
+# class Quickview():
+#     def __init__(self, year=None, month=None, events=None):
+#         super(Quickview, self).__init__()
+#         self.year = year
+#         self.month = month
+#         self.events = events
+#         self.quals = Qual.objects.all()
+#         self.positions = Position.objects.all().order_by('start_time')
 
-    def formatmonthname(self, *args, **kwargs):
-        _date = date(year=self.year, month=self.month, day=1)
-        formatted = _date.strftime('%b %Y')
-        return formatted
+#     def formatmonthname(self, *args, **kwargs):
+#         _date = date(year=self.year, month=self.month, day=1)
+#         formatted = _date.strftime('%b %Y')
+#         return formatted
 
-    def formatheaders(self):
-        _headers = '<div>'
-        headers = [u'Date', u'Time']
-        for position in self.quals:
-            headers.append(f'{position}')
-        for header in headers:
-            _headers += f'<th scope="col">{header}</th>'
-        _headers += '</tr>'
-        return _headers
+#     def formatheaders(self):
+#         _headers = '<div>'
+#         headers = [u'Date', u'Time']
+#         for position in self.quals:
+#             headers.append(f'{position}')
+#         for header in headers:
+#             _headers += f'<th scope="col">{header}</th>'
+#         _headers += '</tr>'
+#         return _headers
 
-    def formatday(self, day):
-        fields = ''
-        # events = self.events.filter(day=day).order_by('position__start_time')
-        # oods = iter(events.filter(position__qual=1))
-        # joods = iter(events.filter(position__qual=2))
-        # dd = events.filter(position__qual=3)
-        # nbp = events.filter(position__qual=4)
-        times = ['0700', '1900', 'SUPER']
-        # weekday = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',)[int(day.strftime("%w"))]
-        for i, time in enumerate(times):
-            fields += time
-        return fields
+#     def formatday(self, day):
+#         fields = ''
+#         # events = self.events.filter(day=day).order_by('position__start_time')
+#         # oods = iter(events.filter(position__qual=1))
+#         # joods = iter(events.filter(position__qual=2))
+#         # dd = events.filter(position__qual=3)
+#         # nbp = events.filter(position__qual=4)
+#         times = ['0700', '1900', 'SUPER']
+#         # weekday = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',)[int(day.strftime("%w"))]
+#         for i, time in enumerate(times):
+#             fields += time
+#         return fields
 
-    def formatmonth(self):
-        self.events = Event.objects.filter(
-            day__year=self.year,
-            day__month=self.month,
-            active=True,
-        ).order_by('day')
-        days = self.events.dates('day', 'day')
-        date = self.events.first().day
-        table = '<div class="quickview">'
-        table += f'<div class="month_label">{self.formatmonthname(date)}</div>'
-        for day in days:
-            table += f'{self.formatday(day)}\n'
-        return table
+#     def formatmonth(self):
+#         self.events = Event.objects.filter(
+#             day__year=self.year,
+#             day__month=self.month,
+#             active=True,
+#         ).order_by('day')
+#         days = self.events.dates('day', 'day')
+#         date = self.events.first().day
+#         table = '<div class="quickview">'
+#         table += f'<div class="month_label">{self.formatmonthname(date)}</div>'
+#         for day in days:
+#             table += f'{self.formatday(day)}\n'
+#         return table
 
 
-class Table(
+class Quickview(
     HTMLCalendar,
 ):
     def __init__(self, year=None, month=None):
-        super(Table, self).__init__()
+        super(Quickview, self).__init__()
         self.year = year
         self.month = month
         self.quals = Qual.objects.all()

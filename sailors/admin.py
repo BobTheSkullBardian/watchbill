@@ -75,7 +75,10 @@ admin.site.register(LogEntry, LogEntryAdmin)
 
 class WatchInline(admin.StackedInline):
     model = Event
-    ordering = ("-day",)
+    ordering = (
+        "-day",
+        'active',
+    )
 
 class DefaultListFilter(SimpleListFilter):
     all_value = '_all'
