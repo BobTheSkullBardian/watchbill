@@ -34,7 +34,7 @@ def login_user(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'You have successfully logged in')
-            return redirect("index")
+            return redirect("quickview")
         else:
             messages.success(request, 'Error logging in')
             return redirect('login')

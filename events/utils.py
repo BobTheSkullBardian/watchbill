@@ -159,7 +159,7 @@ class Quickview(
             watches = events.filter(position__start_time__hour=time)
             style = ('class="table-secondary"', '')[day >= date.today()]
             data += f'<tr {style}>\n'
-            data += f'\t<td>{(day, weekday, "",)[i]}</td>'
+            data += f'\t<td>{(day.strftime("%d%b"), weekday, "",)[i]}</td>'
             data += f'<td>{times[i][0]}</td>'
             for position in self.quals:
                 _watches = watches.filter(position__qual=list(self.quals).index(position) + 1)

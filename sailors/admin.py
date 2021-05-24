@@ -282,6 +282,7 @@ class SailorAdmin(admin.ModelAdmin):
         ),
         (
             'email',
+            'teams_type',
             'in_teams',
         ),
         (
