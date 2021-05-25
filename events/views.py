@@ -1,7 +1,8 @@
 from .utils import (
     Calendar,
     # Table,
-    Quickview,
+    # Quickview,
+    DivLayout,
 )
 import calendar
 from .models import Event
@@ -71,6 +72,7 @@ class CalendarView(generic.ListView):
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(withyear=True)
         context['prev_month'] = prev_month(d)
+        context['curr_month'] = d.strftime("%B %Y")
         context['next_month'] = next_month(d)
         context['calendar'] = mark_safe(html_cal)
         context['view'] = 'calendar'
@@ -79,7 +81,7 @@ class CalendarView(generic.ListView):
 
 class QuickView(generic.ListView):
     model = Event
-    template_name = 'quickview.html'
+    template_name = 'calendar.html'
 
     def __init__(self, *args, **kwargs):
         print(*args)
@@ -91,17 +93,47 @@ class QuickView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
         # headers = [u'Date', u'Time']
         # Instantiate our calendar class with today's year and date
-        quickview = Quickview(d.year, d.month)
+        quickview = DivLayout(d.year, d.month)
         # quickview = Quickview(d.year, d.month)
         #     {'headers' : [u'', u'', u'', u'',Calendar(d.year, d.month)
 
         # Call the formatmonth method, which returns our calendar as a table
         table = quickview.formatmonth()
         context['prev_month'] = prev_month(d)
+        context['curr_month'] = d.strftime("%B %Y")
         context['next_month'] = next_month(d)
         context['calendar'] = mark_safe(table)
         context['view'] = 'quickview'
         return context
+
+
+# class DivView(generic.ListView):
+#     model = Event
+#     template_name = 'calendar.html'
+
+#     def __init__(self, *args, **kwargs):
+#         print(*args)
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+
+#         # use today's date for the calendar
+#         d = get_date(self.request.GET.get('month', None))
+#         # headers = [u'Date', u'Time']
+#         # Instantiate our calendar class with today's year and date
+#         divview = DivLayout(d.year, d.month)
+#         # print(f'body: {body}')
+#         # quickview = Quickview(d.year, d.month)
+#         #     {'headers' : [u'', u'', u'', u'',Calendar(d.year, d.month)
+
+#         # Call the formatmonth method, which returns our calendar as a table
+#         body = divview.formatmonth()
+#         context['prev_month'] = prev_month(d)
+#         context['curr_month'] = d.strftime("%B %Y")
+#         context['next_month'] = next_month(d)
+#         context['calendar'] = mark_safe(body)
+#         context['view'] = 'quickview'
+#         return context
 
 
 def prev_month(d):

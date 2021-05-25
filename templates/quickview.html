@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-	<div class="row">
-		<a class="btn btn-info col" href="{% url 'quickview' %}?{{ prev_month }}"> Previous Month </a>
-		<div class="col btn"><span class="ack float-center">Watch Acknowledged</span></div>
-		<div class="col btn"><span class='no_qual float-center'>Sailor Not Qual'd</span></div>
-		<a class="btn btn-info col" href="{% url 'quickview' %}?{{ next_month }}"> Next Month </a>
-	</div>
+<div class="container-fluid">
+	<div class="row justify-content-center">
+		<a class="btn btn-info col-3" href="{% url 'quickview' %}?{{ prev_month }}"> Previous Month </a>
+		<div class="col-2 btn float-center"><span class="ack">Watch Acknowledged</span></div>
+		<div class="col btn"><span class="float-center h3 ack">{{ curr_month }}</span></div>
+		<div class="col-2 btn float-center"><span class='no_qual'>Sailor Not Qual'd</span></div>
+		<a class="btn btn-info col-3" href="{% url 'quickview' %}?{{ next_month }}"> Next Month </a>
 	<div class="row">
 		{{ calendar }}
 	</div>

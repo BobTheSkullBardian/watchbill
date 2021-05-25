@@ -1,9 +1,10 @@
-from calendar import HTMLCalendar, SUNDAY
+from calendar import HTMLCalendar, SUNDAY, monthrange
 from collections import defaultdict
 # from django.core.exceptions import MultipleObjectsReturned
 from datetime import (
     # datetime as dtime,
     date,
+    timedelta,
     # time
 )
 from .models import (
@@ -62,13 +63,141 @@ class Calendar(HTMLCalendar):
             day__month=self.month,
         )
 
-        cal = '<table border="0" cellpadding="0" cellspacing="0" class="calendar">\n'
-        cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
+        cal = '<table class="calendar">\n'
+        # cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
         cal += f'{self.formatweekheader()}\n'
         for week in self.monthdays2calendar(self.year, self.month):
             cal += f'{self.formatweek(week, events)}\n'
         cal += '</table>'
         return cal
+
+
+class DivLayout():
+    def __init__(self, year=None, month=None):
+        super(DivLayout, self).__init__()
+        self.year = year
+        self.month = month
+        self.monthyear = date(self.year, self.month, day=1)
+        self.prev_month = self.monthyear - timedelta(days=1)
+        self.next_month = self.monthyear.replace(day=monthrange(self.year, self.month)[1]) + timedelta(days=1)
+        self.quals = Qual.objects.all()
+        self.positions = Position.objects.all().order_by('start_time')
+
+    def formatmonth(self, withyear=True):
+        self.events = Event.objects.filter(
+            day__year=self.year,
+            day__month=self.month,
+            active=True,
+        ).order_by('day')
+        days = self.events.dates('day', 'day')  # set([event.day for event in events])
+        body = ''
+        body += self.formatheaders()
+        for day in days:
+            body += self.formatday(day)
+        return body
+
+    def formatheaders(self):
+        # data = 'data'
+        # headers = ['', *self.quals]
+        _header = '<div class="row">'
+        _header += f'<div class="col-1"></div>'
+        for data in self.quals:
+            _header += f'<div class="col h4 float-center">{data}</div>'
+        _header += '</div>'
+        return _header
+        
+    def formatday(self, day):
+        events = self.events.filter(day=day)
+        weekday = (
+            'Sun', 'Mon', 'Tue',
+            'Wed', 'Thu', 'Fri',
+            'Sat',)[int(day.strftime("%w"))]
+        style = ""
+        # style = ("bg-secondary", "")[day >= date.today()]
+        _day = f'<div class="row border border-dark {style}">'
+        _day += f'<div class="col-1 border border-dark">{day.strftime("%d%b")} {weekday}</div>'
+        for position in self.quals:
+            _watches = events.filter(position__qual=list(self.quals).index(position) + 1)
+            _day += f'<div class="col border border-dark">'
+            for watch in _watches:
+                name = f'{watch.stander.rate_lname()}'
+                status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
+                _day += '<div class="row">'
+                if watch.position.label:
+                    _day += f'<div class="col-4">{watch.position.label}</div>'
+                _day += f'<div class="col"><span class="{status}">{(name, "")[name[-4:]=="Null"]}</span></div>'
+                _day += '</div>'
+            _day += '</div>'
+        _day += '</div>'
+        return _day
+
+        
+# class Quickview(
+#     HTMLCalendar,
+# ):
+#     def __init__(self, year=None, month=None):
+#         super(Quickview, self).__init__()
+#         self.year = year
+#         self.month = month
+#         self.quals = Qual.objects.all()
+#         self.positions = Position.objects.all().order_by('start_time')
+
+#     def formatheaders(self):
+#         row = '<tr>\n'
+#         headers = [u'Date', u'Time']
+#         for position in self.quals:
+#             headers.append(f'{position}')
+#         for header in headers:
+#             row += f'\t<th scope="col">{header}</th>\n'
+#         row += '</tr>\n'
+#         return row
+
+#     def formatday(self, day):
+#         events = self.events.filter(day=day)
+#         data = ''
+#         times = [
+#             ('0700', '07'),
+#             ('1900', '19'),
+#             ('SUPER', '00'),
+#         ]
+#         weekday = (
+#             'Sun', 'Mon', 'Tue',
+#             'Wed', 'Thu', 'Fri',
+#             'Sat',)[int(day.strftime("%w"))]
+#         for i, (time_label, time) in enumerate(times):
+#             watches = events.filter(position__start_time__hour=time)
+#             style = ('class="table-secondary"', '')[day >= date.today()]
+#             data += f'<tr {style}>\n'
+#             data += f'\t<td>{(day.strftime("%d%b"), weekday, "",)[i]}</td>'
+#             data += f'<td>{times[i][0]}</td>'
+#             for position in self.quals:
+#                 _watches = watches.filter(position__qual=list(self.quals).index(position) + 1)
+#                 # warn = ('bg-warning', '')[len(_watches) > 0]
+#                 data += f'<td {("rowspan=3", "")[i<3]} class={("bg-danger font-grey", "")[len(_watches) > 0 or str(position) in ("NBP 306", "Duty Driver")]}>'
+#                 for watch in _watches:
+#                     name = f'{watch.stander.rate_lname()}'
+#                     status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
+#                     data += f'<span class="{status}" >{(name, "")[name[-4:]=="Null"]}</span></br>'
+#                 data += '</td>\n'
+#             data += '</tr>\n'
+#         return data
+
+#     def formatmonth(self, withyear=True):
+#         self.events = Event.objects.filter(
+#             day__year=self.year,
+#             day__month=self.month,
+#             active=True,
+#         ).order_by('day')
+#         days = self.events.dates('day', 'day')  # set([event.day for event in events])
+#         cal = '<table cellpadding="0" cellspacing="0" class="table table-sm table-bordered table-striped">\n'
+
+#         # cal += f'<thead class="thead-dark text-center">{self.formatmonthname(self.year, self.month, withyear=withyear)}<thead>\n'
+#         cal += f'<thead>{self.formatheaders()}</thead>\n'
+#         for day in days:
+#             cal += f'{self.formatday(day)}'
+#         cal += '</table>'
+#         # print(cal)
+#         return cal
 
 
 # class Quickview():
@@ -121,74 +250,6 @@ class Calendar(HTMLCalendar):
 #         for day in days:
 #             table += f'{self.formatday(day)}\n'
 #         return table
-
-
-class Quickview(
-    HTMLCalendar,
-):
-    def __init__(self, year=None, month=None):
-        super(Quickview, self).__init__()
-        self.year = year
-        self.month = month
-        self.quals = Qual.objects.all()
-        self.positions = Position.objects.all().order_by('start_time')
-
-    def formatheaders(self):
-        row = '<tr>\n'
-        headers = [u'Date', u'Time']
-        for position in self.quals:
-            headers.append(f'{position}')
-        for header in headers:
-            row += f'\t<th scope="col">{header}</th>\n'
-        row += '</tr>\n'
-        return row
-
-    def formatday(self, day):
-        events = self.events.filter(day=day)
-        data = ''
-        times = [
-            ('0700', '07'),
-            ('1900', '19'),
-            ('SUPER', '00'),
-        ]
-        weekday = (
-            'Sun', 'Mon', 'Tue',
-            'Wed', 'Thu', 'Fri',
-            'Sat',)[int(day.strftime("%w"))]
-        for i, (time_label, time) in enumerate(times):
-            watches = events.filter(position__start_time__hour=time)
-            style = ('class="table-secondary"', '')[day >= date.today()]
-            data += f'<tr {style}>\n'
-            data += f'\t<td>{(day.strftime("%d%b"), weekday, "",)[i]}</td>'
-            data += f'<td>{times[i][0]}</td>'
-            for position in self.quals:
-                _watches = watches.filter(position__qual=list(self.quals).index(position) + 1)
-                # warn = ('bg-warning', '')[len(_watches) > 0]
-                data += f'<td {("rowspan=3", "")[i<3]} class={("bg-danger font-grey", "")[len(_watches) > 0 or str(position) in ("NBP 306", "Duty Driver")]}>'
-                for watch in _watches:
-                    name = f'{watch.stander.rate_lname()}'
-                    status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
-                    data += f'<span class="{status}" >{(name, "")[name[-4:]=="Null"]}</span></br>'
-                data += '</td>\n'
-            data += '</tr>\n'
-        return data
-
-    def formatmonth(self, withyear=True):
-        self.events = Event.objects.filter(
-            day__year=self.year,
-            day__month=self.month,
-            active=True,
-        ).order_by('day')
-        days = self.events.dates('day', 'day')  # set([event.day for event in events])
-        cal = '<table cellpadding="0" cellspacing="0" class="table table-sm table-bordered table-striped">\n'
-
-        cal += f'<thead class="thead-dark">{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
-        cal += f'{self.formatheaders()}</thead>\n'
-        for day in days:
-            cal += f'{self.formatday(day)}'
-        cal += '</table>'
-        # print(cal)
-        return cal
 
 
 # class EventCalendar(HTMLCalendar):

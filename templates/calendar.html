@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-	<div class="row">
-		<a class="btn btn-info col" href="{% url 'calendar' %}?{{ prev_month }}"> Previous Month </a>
-		<div class="ack btn col"><span class="float-center">Watch Acknowledged</span></div>
-		<div class="no_qual btn col"><span class='float-center'>Sailor Not Qual'd</span></div>
-		<a class="btn btn-info col" href="{% url 'calendar' %}?{{ next_month }}"> Next Month </a>
+<div class="container-fluid">
+	<div class="row justify-content-center">
+		<a class="btn bg-info col-2" href="?{{ prev_month }}"><span class="h3"><<</span></a>
+		<div class="col-2"><p class="h2 ack text-center">{{ curr_month }}</p></div>
+		<a class="btn bg-info col-2" href="?{{ next_month }}"><span class="h3">>></span></a>
 	</div>
-	<div class="row">
+	<div class="row justify-content-center">
+		<div class="col-2"><p class="ack text-center">Watch Acknowledged</p></div>
+		<div class="col-2"><p class='bg-danger text-center'>Sailor Not Qual'd</p></div>
+	</div>
+	<!--<div class="row border">-->
 		{{ calendar }}
-	</div>
+	<!--</div>-->
 </div>
 {% endblock %}

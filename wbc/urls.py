@@ -21,6 +21,7 @@ from sailors.views import process
 from events.views import (
     CalendarView,
     QuickView,
+    # DivView,
     # index,
     login_user,
     logout_user,
@@ -36,4 +37,5 @@ urlpatterns = [
     path('', view=QuickView.as_view(), name='quickview'),
     path('calendar/', view=CalendarView.as_view(), name='calendar'),
     path('quickview/', view=QuickView.as_view(), name='quickview'),
+    # path('divview/', view=DivView.as_view(), name='divview'),
 ] # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
