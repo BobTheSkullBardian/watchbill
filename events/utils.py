@@ -42,7 +42,7 @@ class Calendar(HTMLCalendar):
                 _name = f'{event.stander.rate_lname()}'
                 if 'Null' in _name:
                     continue
-                status = f'{("no_qual","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("", "ack")[event.acknowledged]}'
+                status = f'{("no_qual","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("bg-warning", "")[event.acknowledged]}'
                 d += f'<li class="{status}">{event.position.qual}</br>'
                 d += f'{_name}</li>'  # {event.stander.name.split(",")[0]}</li>'
             d += '</ul>'
@@ -109,7 +109,7 @@ class DivLayout():
     def formatday(self, day):
         events = self.events.filter(day=day)
         # style = ""
-        style = ("bg-secondary", "")[day >= date.today()]
+        style = ("text-muted", "ack")[day >= date.today()]
         _day = f'<div class="row border border-dark {style}">'
         _day += f'<div class="col-sm-1 align-self-center h5">{day.strftime("%d%b %a")}</div>'
         for position in self.quals:
@@ -117,8 +117,8 @@ class DivLayout():
             _day += f'<div class="col border border-dark">'
             for watch in _watches:
                 name = f'{watch.stander.rate_lname()}'
-                status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]} {("", "ack")[watch.acknowledged]}'
-                _day += '<div class="row">'
+                status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]}'
+                _day += f'<div class="row {("bg-warning", "")[watch.acknowledged]}">'
                 _day += f'<div class="col-xl-5 col-lg-7 col-md-8"><span class="text-nowrap">{watch.position}</span></div>'
                 _day += f'<div class="col"><span class="{status} text-nowrap">{(name, "")[name[-4:]=="Null"]}</span></div>'
                 _day += '</div>'

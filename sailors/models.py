@@ -70,7 +70,7 @@ class Sailor(models.Model):
         if self.quald:
             return f'{self.off_wb_date()} months left on WB'
         if self.report:
-            days_to_qual = 45
+            days_to_qual = 30
             today = date.today()
             delta = timedelta(days=days_to_qual)
             dinq = self.report + delta
