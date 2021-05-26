@@ -3,15 +3,13 @@
 <div class="container-fluid">
 	<div class="row justify-content-center">
 		<a class="btn bg-info col-2" href="?{{ prev_month }}"><span class="h3"><<</span></a>
-		<div class="col-2"><p class="h2 ack text-center">{{ curr_month }}</p></div>
+		<div class="col-sm-3"><p class="h2 ack text-center">{{ curr_month }}</p></div>
 		<a class="btn bg-info col-2" href="?{{ next_month }}"><span class="h3">>></span></a>
 	</div>
 	<div class="row justify-content-center">
-		<div class="col-2"><p class="ack text-center">Watch Acknowledged</p></div>
-		<div class="col-2"><p class='bg-danger text-center'>Sailor Not Qual'd</p></div>
+		<div class="col-sm-3"><p class="ack text-center">Watch Acknowledged</p></div>
+		<div class="col-sm-3"><p class='bg-danger text-center'>Sailor Not Qual'd</p></div>
 	</div>
-	<!--<div class="row border">-->
-		{{ calendar }}
-	<!--</div>-->
+	{{ calendar }}
 </div>
 {% endblock %}
