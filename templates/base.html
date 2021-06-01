@@ -57,21 +57,16 @@
     </div>
 </nav>
 
+<!-- Before the calendar content -->
 
-  <!-- Before the calendar content -->
-
-<div class="container-fluid">
-    {% if messages %} {% for message in messages %}
+<div class="container-fluid">{% if messages %} {% for message in messages %}
     <div class="alert alert-warning alert-dismissable" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true"><sup>&times;</sup></span>
-        </button>
-        {{message}}
+        </button> 
+        {{message}}    
     </div>
-    {% endfor %} {% endif %}
-
-    {% block content %}
-    {% endblock content%}
+    {% endfor %}{% endif %}{% block content %}{% endblock content%}
 </div>
 
   <!-- After the calendar content -->

@@ -33,6 +33,13 @@ class Event(models.Model):
         url = reverse(f'admin:{label}_{name}_change', args=[self.id])
         return f'<a href="{url}">{str(self.position)}</a>'
 
+    def get_absolute_url_flat(self):
+        label = self._meta.app_label
+        name = self._meta.model_name
+        url = reverse(f'admin:{label}_{name}_change', args=[self.id])
+        flat = 'color: black; text-decoration: none;'
+        return f'<a href="{url}" style="{flat}">{str(self.position)}</a>'
+
     def get_day_url(self, day, watches):
         label = self._meta.app_label
         name = self._meta.model_name

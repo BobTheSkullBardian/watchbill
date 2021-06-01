@@ -143,11 +143,6 @@ def show_messages(modeladmin, request, queryset):
     return render(request, 'recall.html', {'watches': watches})
 
 
-def need_ack(modeladmin, request, queryset):
-    days = {day: [*queryset.filter(day=day)] for day in queryset.dates('day', 'day')}
-    return render(request, 'need_ack.html', {'days': days})
-
-
 def show_quickview(modeladmin, request, queryset):
     data = defaultdict(lambda: defaultdict(list))
     for i, watch in enumerate(queryset):
@@ -177,11 +172,10 @@ class EventAdmin(admin.ModelAdmin):
     )
 
     actions = (
-        show_messages,
-        show_quickview,
-        need_ack,
+        # show_messages,
+        # show_quickview,
         ack_watch,
-        make_month,
+        # make_month,
     )
 
     list_filter = (

@@ -50,6 +50,13 @@ class Sailor(models.Model):
     def __retr__(self):
         return self
 
+    def get_absolute_url_flat(self):
+        label = self._meta.app_label
+        name = self._meta.model_name
+        url = reverse(f'admin:{label}_{name}_change', args=[self.id])
+        flat = 'color: black; text-decoration: none;'
+        return f'<a href="{url}" style="{flat}">{self.rate_lname()}</a>'
+
     def get_absolute_url(self):
         label = self._meta.app_label
         name = self._meta.model_name
@@ -94,22 +101,6 @@ class Sailor(models.Model):
             return f'{months}'
     off_wb_date.admin_order_field = 'qualdate'
     off_wb_date.short_description = 'Months left on WB'
-    # off_wb_date.empty_value_display = ''
-
-    # def get_watches(self):
-    #     return [f'{watch.day.strftime("%d%b")} {watch.position}' for watch in self.event_set.filter(active=True).order_by('day')][-3:]
-    # get_watches.short_description = "Last 3 Watches"
-    # get_watches.allow_tags = True
-
-    # def watch_count(self):
-    #     today = date.today()
-    #     delta = timedelta(days = 100)
-    #     start = today - delta
-    #     watches = self.event_set.filter(day__gte=start, active=True)
-    #     return len(watches)
-    # watch_count.short_description = "100 day watch #"
-    # # watch_count.admin_order_field = 'watch_count'
-    # watch_count.allow_tags = True
 
     DEPTS = (
         ('31', '31'),
@@ -122,17 +113,10 @@ class Sailor(models.Model):
     DIVS = [
         (
             y, y
-            # x[0] + y, x[0] + y
         )
-        # for x in DEPTS
         for y in [
             '',
             *list(ascii_uppercase)[:5]
-            # 'A',
-            # 'B',
-            # 'C',
-            # 'D',
-            # 'E',
         ]
     ]
 
@@ -203,3 +187,14 @@ class Qual(models.Model):
     qual = models.CharField('Watch Qual', max_length=30, unique=True)
     jqr = models.BooleanField(
         "JQR Req'd", default=True)
+
+
+class UA(models.Model):
+    sailor = models.ForeignKey(
+        Sailor, verbose_name='Watch Stander', on_delete=models.CASCADE)
+    start = models.DateField(
+        u'Beginning of Unavailability', help_text=u'Start Day')
+    end = models.DateField(
+        u'End of Unavailability', help_text=u'End Day/Time')
+    desc = models.CharField(
+        u'Description', max_length=100, blank=True, null=True,)

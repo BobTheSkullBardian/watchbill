@@ -91,7 +91,8 @@ class QuickView(generic.ListView):
 
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
-        quickview = DivLayout(d.year, d.month)
+        auth = self.request.user.is_authenticated
+        quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
         context['prev_month'] = prev_month(d)
         context['curr_month'] = d.strftime("%B %Y")

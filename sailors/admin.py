@@ -7,7 +7,7 @@ from django.db.models import Count  # , Q
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
-from .models import Sailor, Qual
+from .models import Sailor, Qual, UA
 from events.models import Event
 import csv
 
@@ -79,6 +79,9 @@ class WatchInline(admin.StackedInline):
         "-day",
         'active',
     )
+    
+class UAInline(admin.StackedInline):
+    model = UA
 
 class DefaultListFilter(SimpleListFilter):
     all_value = '_all'
@@ -234,7 +237,10 @@ class SailorAdmin(admin.ModelAdmin):
         # ack,
     )
 
-    inlines = (WatchInline,)
+    inlines = (
+        WatchInline,
+        UAInline,
+    )
 
     list_display = (
         'name',
