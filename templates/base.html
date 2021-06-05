@@ -6,7 +6,7 @@
 <head>
 <meta charset="utf-8">
 
-<title>{% trans "Watchbill Website" %} | {% block title %}{% endblock title%}</title>
+<title>{% trans "Watchbill Website" %}{% if title %} | {% block title %}{% endblock title %}{% endif %}</title>
 <meta name="description" content="{% block description %}{% endblock %}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="300">
@@ -23,39 +23,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'quickview' %}">Watchbill</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-    aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item" >
-                <a href="{% url 'calendar' %}" class="nav-link">Calendar</a>
-            </li>
-            <li class="nav-item" >
-                <a href="{% url 'quickview' %}" class="nav-link">Quickview</a>
-            </li>
-        <!--</ul>-->
-        <!--<ul class="navbar-nav nav-right">-->
-            <li class="nav-right ">
-                {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                <a class="nav-link" href="/admin/">Admin Page</a>
-            </li>
-            <li class="nav-right ">
-                {% endif %}
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                <a class="nav-link" href="{% url 'login' %}">Login</a>
-                {% endif %}
-            </li>
-        </ul>
-    </div>
-    </div>
-</nav>
+    {% include "navbar.html" %}
 
 <!-- Before the calendar content -->
 
@@ -66,13 +34,13 @@
         </button> 
         {{message}}    
     </div>
-    {% endfor %}{% endif %}{% block content %}{% endblock content%}
+    {% endfor %}{% endif %}
+    {% block content %}{% endblock content %} 
+    {% block calendar %}{% endblock calendar %}
 </div>
 
-  <!-- After the calendar content -->
-  <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"-->
-  <!--  crossorigin="anonymous"></script>-->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
+<!-- After the calendar content -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
     integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 
   {% block script %}

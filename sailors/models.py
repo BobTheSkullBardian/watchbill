@@ -193,8 +193,8 @@ class UA(models.Model):
     sailor = models.ForeignKey(
         Sailor, verbose_name='Watch Stander', on_delete=models.CASCADE)
     start = models.DateField(
-        u'Beginning of Unavailability', help_text=u'Start Day')
+        u'Beginning of Unavailability', help_text=u'Start Day',null=True)
     end = models.DateField(
-        u'End of Unavailability', help_text=u'End Day/Time')
+        u'End of Unavailability', help_text=u'End Day/Time', null=True)
     desc = models.CharField(
         u'Description', max_length=100, blank=True, null=True,)

@@ -14,9 +14,30 @@ from .models import (
 )
 from sailors.models import (
     Qual,
+    Sailor,
 )
 
 
+class DivSailors():
+    def __init__(self):
+        super(DivSailors, self).__init__()
+
+    def get_sailors(self):
+        tab = "\t"
+        body = f'{tab*0}<div class="row">\n'
+        body = f'{tab*1}<div class="col">\n'
+        sailors = Sailor.objects.filter(active=True).order_by('name')
+        for sailor in sailors:
+            name = sailor.get_absolute_url_flat().split('<')
+            quals = ", ".join(sailor.quals())
+            # name[1] += f' {quals}'
+            link = '<'.join(name)
+            body += f'{tab*2}<div class="row">{link}</div>\n'
+        body += f'{tab*1}</div">\n'
+        body += f'{tab*0}</div">\n'
+        return body
+    
+    
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None, events=None):
         super(Calendar, self).__init__()

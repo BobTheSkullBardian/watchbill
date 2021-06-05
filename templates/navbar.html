@@ -1,27 +1,26 @@
-{% extends "base.html" %}
-{% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{% url 'calendar' %}">Watchbill</a>
+    <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'quickview' %}">Watchbill</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
     aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav rm-auto">
-            {% if user.is_authenticated %}
-            <li class="nav-tem" style="color:gray">
-                <a href="/calendar/" class="nav-link">Calendar</a>
+            <li class="nav-item" >
+                <a href="{% url 'calendar' %}" class="nav-link">Calendar</a>
             </li>
-            {% endif %}
-
+            <li class="nav-item" >
+                <a href="{% url 'quickview' %}" class="nav-link">Quickview</a>
+            </li>
         </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item ">
+        <ul class="navbar-nav nav-right">
+            <li class="nav-right ">
                 {% if user.is_authenticated %}
                 {% if user.is_staff %}
                 <a class="nav-link" href="/admin/">Admin Page</a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-right ">
                 {% endif %}
                 <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                 {% else %}
@@ -30,5 +29,5 @@
             </li>
         </ul>
     </div>
+    </div>
 </nav>
-{% endblock %}

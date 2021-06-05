@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Unavailability',
+            name='UA',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('start_dt', models.DateTimeField(help_text='Start Day/Time', verbose_name='Beginning of Unavailability')),

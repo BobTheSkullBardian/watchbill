@@ -7,15 +7,14 @@ from django.db.models import Count  # , Q
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
-from .models import Sailor, Qual, UA
+from .models import Sailor, Qual, UA#, Testing
 from events.models import Event
 import csv
 
 admin.site.unregister(Group)
 
-
-# @admin.register(Qual)
-# class QualAdmin(admin.ModelAdmin):
+# @admin.register(Testing)
+# class TestingAdmin(admin.ModelAdmin):
 #     pass
 
 
@@ -80,8 +79,10 @@ class WatchInline(admin.StackedInline):
         'active',
     )
     
+
 class UAInline(admin.StackedInline):
     model = UA
+
 
 class DefaultListFilter(SimpleListFilter):
     all_value = '_all'

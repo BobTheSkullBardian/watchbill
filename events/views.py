@@ -3,9 +3,11 @@ from .utils import (
     # Table,
     # Quickview,
     DivLayout,
+    DivSailors,
 )
 import calendar
 from .models import Event
+from sailors.models import Sailor
 from django.views import generic
 from django.shortcuts import (
     render,
@@ -88,7 +90,11 @@ class QuickView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        
+        li = DivSailors()
+        sailors = li.get_sailors()
+        print(sailors)
+        
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
         auth = self.request.user.is_authenticated
@@ -97,6 +103,7 @@ class QuickView(generic.ListView):
         context['prev_month'] = prev_month(d)
         context['curr_month'] = d.strftime("%B %Y")
         context['next_month'] = next_month(d)
+        context['sailors'] = mark_safe(sailors)
         context['calendar'] = mark_safe(table)
         context['view'] = 'quickview'
         return context

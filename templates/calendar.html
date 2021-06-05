@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block content %}
+{% block calendar %}
 	<div class="row justify-content-center">
 		<a class="btn bg-info col-2" href="?{{ prev_month }}"><span class="h3"><<</span></a>
 		<div class="col-sm-3"><p class="h2 ack text-center">{{ curr_month }}</p></div>
@@ -10,4 +10,8 @@
 		<div class="col-sm-2"><p class="bg-danger text-center">Sailor Not Qual'd</p></div>
 	</div>
 {{ calendar }}
-{% endblock %}
+{% if request.user.is_authenticated %}
+	{{ sailors }} 
+{% endif %}
+<!--{% include 'sailors.html' %}-->
+{% endblock calendar %}
