@@ -50,18 +50,12 @@ class Sailor(models.Model):
     def __retr__(self):
         return self
 
-    def get_absolute_url_flat(self):
+    def get_absolute_url(self, nostyle=False):
         label = self._meta.app_label
         name = self._meta.model_name
+        style = ' style="color: black; text-decoration: none;"'
         url = reverse(f'admin:{label}_{name}_change', args=[self.id])
-        flat = 'color: black; text-decoration: none;'
-        return f'<a href="{url}" style="{flat}">{self.rate_lname()}</a>'
-
-    def get_absolute_url(self):
-        label = self._meta.app_label
-        name = self._meta.model_name
-        url = reverse(f'admin:{label}_{name}_change', args=[self.id])
-        return f'<a href="{url}">{self.rate_lname()}</a>'
+        return f'<a href="{url}"{("", style)[nostyle]}>{self.rate_lname()}</a>'
 
     def quals(self):
         return [str(q) for q in self.qual.all()]
@@ -183,6 +177,11 @@ class Qual(models.Model):
 
     def __retr__(self):
         return self.qual
+    
+    def admin_filter(self, nostyle=False):
+        style = ' style="color: black; text-decoration: none;"'
+        url = f'/admin/sailors/sailor/?qual={self.id}'
+        return f'<a href="{url}"{("", style)[nostyle]}>{self}</a>'
 
     qual = models.CharField('Watch Qual', max_length=30, unique=True)
     jqr = models.BooleanField(

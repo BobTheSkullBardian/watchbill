@@ -94,7 +94,7 @@ class QuickView(generic.ListView):
         li = DivSailors()
         sailors = li.get_sailors()
         print(sailors)
-        
+
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
         auth = self.request.user.is_authenticated

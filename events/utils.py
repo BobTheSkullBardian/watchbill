@@ -1,5 +1,6 @@
 from calendar import HTMLCalendar, SUNDAY, monthrange
 from collections import defaultdict
+from django.db.models import Q
 # from django.core.exceptions import MultipleObjectsReturned
 from datetime import (
     # datetime as dtime,
@@ -25,16 +26,28 @@ class DivSailors():
     def get_sailors(self):
         tab = "\t"
         body = f'{tab*0}<div class="row">\n'
-        body = f'{tab*1}<div class="col">\n'
         sailors = Sailor.objects.filter(active=True).order_by('name')
-        for sailor in sailors:
-            name = sailor.get_absolute_url_flat().split('<')
-            quals = ", ".join(sailor.quals())
-            # name[1] += f' {quals}'
-            link = '<'.join(name)
-            body += f'{tab*2}<div class="row">{link}</div>\n'
-        body += f'{tab*1}</div">\n'
-        body += f'{tab*0}</div">\n'
+        quals = Qual.objects.filter(~Q(id=4))
+        for qual in quals:
+            #   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Simple collapsible</button>
+            #   <div id="demo" class="collapse">
+            #     Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+            #     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            #     quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            #   </div>
+
+            body += f'{tab*1}<div class="col-4 border border-dark">\n'
+            body += f'{tab*2}<div class="row">{qual.admin_filter(True)}</div>\n'
+            for sailor in sailors.filter(qual=qual):
+                name = sailor.get_absolute_url(nostyle=True).split('<')
+                print(f'name: {name}')
+                link = '<'.join(name)
+                print(f'link: {link}')
+                body += f'{tab*2}<div id="{qual}" class="row">\n'
+                body += f'{tab*3}<div class="col">{link}</div>\n'
+                body += f'{tab*2}</div>\n'
+            body += f'{tab*1}</div>\n'
+        body += f'{tab*0}</div>\n'
         return body
     
     
@@ -141,7 +154,7 @@ class DivLayout():
             _day += f'{tab*2}<div class="col border border-dark {position}">\n'
             for watch in _watches:
                 if self.auth:
-                    name = watch.stander.get_absolute_url_flat()
+                    name = watch.stander.get_absolute_url(nostyle=True)
                     pos = watch.get_absolute_url_flat()
                 else:
                     name = watch.stander.rate_lname()
