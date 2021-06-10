@@ -69,7 +69,8 @@ class CalendarView(generic.ListView):
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
         # Instantiate our calendar class with today's year and date
-        cal = Calendar(d.year, d.month)
+        auth = self.request.user.is_authenticated
+        cal = Calendar(d.year, d.month, auth=auth)
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(withyear=True)
@@ -93,7 +94,7 @@ class QuickView(generic.ListView):
         
         li = DivSailors()
         sailors = li.get_sailors()
-        print(sailors)
+        # print(sailors)
 
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))

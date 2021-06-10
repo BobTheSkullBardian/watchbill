@@ -123,7 +123,7 @@ def ack_watch(modeladmin, request, queryset):
 
 def make_month(modeladmin, request, queryset):
     positions = Position.objects.all()
-    day = Event.objects.all().order_by('day').last().day
+    day = queryset.last().day
     month = add_months(day, 1).month
     day += timedelta(days=6)
     null_stander = Sailor.objects.get(name='Null, Null')

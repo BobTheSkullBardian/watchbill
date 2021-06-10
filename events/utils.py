@@ -40,11 +40,12 @@ class DivSailors():
             body += f'{tab*2}<div class="row">{qual.admin_filter(True)}</div>\n'
             for sailor in sailors.filter(qual=qual):
                 name = sailor.get_absolute_url(nostyle=True).split('<')
-                print(f'name: {name}')
+                status = ("bg-danger","")[sailor.quald]
+                # print(f'name: {name}')
                 link = '<'.join(name)
-                print(f'link: {link}')
+                # print(f'link: {link}')
                 body += f'{tab*2}<div id="{qual}" class="row">\n'
-                body += f'{tab*3}<div class="col">{link}</div>\n'
+                body += f'{tab*3}<div class="col {status}">\n{tab*4}{link}\n{tab*3}</div>\n'
                 body += f'{tab*2}</div>\n'
             body += f'{tab*1}</div>\n'
         body += f'{tab*0}</div>\n'
@@ -52,10 +53,12 @@ class DivSailors():
     
     
 class Calendar(HTMLCalendar):
-    def __init__(self, year=None, month=None, events=None):
+    def __init__(self, year=None, month=None, events=None, auth=False):
         super(Calendar, self).__init__()
         self.year = year
         self.month = month
+        self.auth = auth
+
         self.setfirstweekday(SUNDAY)
         # print(f'Sunday: {SUNDAY}')
         self.events = events
@@ -63,6 +66,10 @@ class Calendar(HTMLCalendar):
     # formats a day as a td
     # filter events by day
     def formatday(self, day, weekday, events):
+        layout = f'{self.year}-{("","0")[len(str(self.month))==1]}{self.month}-{day}'
+        url = f'/admin/events/event/?day={layout}'
+        href = f'<a href="{url}" style="color: black; text-decoration: none;">{day}</a>'
+        day_str = f'{(day, href)[self.auth]}'
         if day == 0:
             return '<td><span class="noday">&nbsp;</span></td>'
         events_per_day = events.filter(day__day=day, active=True)
@@ -73,14 +80,19 @@ class Calendar(HTMLCalendar):
         for (_d, _t), events in sorted(times.items()):
             d += f'<li>{_t.strftime("%H%M")}<ul>'
             for event in events:
-                _name = f'{event.stander.rate_lname()}'
+                if self.auth:
+                    _name = f'{event.stander.get_absolute_url(nostyle=True)}'
+                    pos = event.get_absolute_url(nostyle=True)
+                else:
+                    _name = f'{event.stander.rate_lname()}'
+                    pos = event.position.qual
                 if 'Null' in _name:
                     continue
-                status = f'{("no_qual","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("bg-warning", "")[event.acknowledged]}'
-                d += f'<li class="{status}">{event.position.qual}</br>'
+                status = f'{("bg-danger","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("bg-warning", "")[event.acknowledged]}'
+                d += f'<li class="{status}">{pos}</br>'
                 d += f'{_name}</li>'  # {event.stander.name.split(",")[0]}</li>'
             d += '</ul>'
-        return f'<td><span class="date">{day}</span><ul> {d} </ul></td>'
+        return f'<td><span class="date">{day_str}</span><ul> {d} </ul></td>'
 
     # formats a week as a tr
     def formatweek(self, theweek, events):
@@ -147,15 +159,18 @@ class DivLayout():
         tab = "\t"
         events = self.events.filter(day=day)
         style = (" text-muted", " ack")[day >= date.today()]
+        layout = day.strftime("%d%b %a")
+        url = f'/admin/events/event/?day={day}'
+        href = f'<a href="{url}" style="color: black; text-decoration: none;">{layout}</a>'
         _day = f'{tab*1}<div class="row border border-dark{style}">\n'
-        _day += f'{tab*2}<div class="col-sm-1 align-self-center h5">{day.strftime("%d%b %a")}</div>\n'
+        _day += f'{tab*2}<div class="col-sm-1 align-self-center h5">{(layout, href)[self.auth]}</div>\n'
         for i, position in enumerate(self.quals):
             _watches = events.filter(position__qual=list(self.quals).index(position) + 1)
             _day += f'{tab*2}<div class="col border border-dark {position}">\n'
             for watch in _watches:
                 if self.auth:
                     name = watch.stander.get_absolute_url(nostyle=True)
-                    pos = watch.get_absolute_url_flat()
+                    pos = watch.get_absolute_url(nostyle=True)
                 else:
                     name = watch.stander.rate_lname()
                     pos = watch.position
