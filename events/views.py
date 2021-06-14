@@ -91,14 +91,14 @@ class QuickView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        auth = self.request.user.is_authenticated
         
-        li = DivSailors()
+        li = DivSailors(auth=auth)
         sailors = li.get_sailors()
         # print(sailors)
 
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
-        auth = self.request.user.is_authenticated
         quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
         context['prev_month'] = prev_month(d)

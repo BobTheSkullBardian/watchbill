@@ -33,9 +33,11 @@ class Event(models.Model):
     #     url = reverse(f'admin:{label}_{name}_change', args=[self.id])
     #     return f'<a href="{url}">{str(self.position)}</a>'
 
-    def get_absolute_url(self, nostyle=False):
+    def get_absolute_url(self, nostyle=False, auth=False):
         label = self._meta.app_label
         name = self._meta.model_name
+        if not auth:
+            return f'{self.position}'
         style = ' style="color: black; text-decoration: none;"'
         url = reverse(f'admin:{label}_{name}_change', args=[self.id])
         return f'<a href="{url}"{("", style)[nostyle]}>{self.position}</a>'
@@ -56,7 +58,7 @@ class Event(models.Model):
     position = models.ForeignKey(
         'Position', verbose_name='Position', on_delete=models.CASCADE)
     notes = models.CharField(
-        u'Notes', max_length=100, blank=True, null=True)
+        u'Watch Notes', max_length=100, blank=True, null=True)
     stander = models.ForeignKey(
         Sailor, verbose_name='Watch Stander', on_delete=models.CASCADE)
     acknowledged = models.BooleanField(

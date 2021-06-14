@@ -50,9 +50,11 @@ class Sailor(models.Model):
     def __retr__(self):
         return self
 
-    def get_absolute_url(self, nostyle=False):
+    def get_absolute_url(self, nostyle=False, auth=False):
         label = self._meta.app_label
         name = self._meta.model_name
+        if not auth:
+            return f'{self.rate_lname()}'
         style = ' style="color: black; text-decoration: none;"'
         url = reverse(f'admin:{label}_{name}_change', args=[self.id])
         return f'<a href="{url}"{("", style)[nostyle]}>{self.rate_lname()}</a>'
@@ -179,7 +181,7 @@ class Qual(models.Model):
         return self.qual
     
     def admin_filter(self, nostyle=False):
-        style = ' style="color: black; text-decoration: none;"'
+        style = ' style="color: black; text-decoration: none; font-weight: bold;"'
         url = f'/admin/sailors/sailor/?qual={self.id}'
         return f'<a href="{url}"{("", style)[nostyle]}>{self}</a>'
 

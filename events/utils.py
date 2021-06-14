@@ -20,8 +20,9 @@ from sailors.models import (
 
 
 class DivSailors():
-    def __init__(self):
+    def __init__(self, auth=False):
         super(DivSailors, self).__init__()
+        self.auth = auth
 
     def get_sailors(self):
         tab = "\t"
@@ -37,14 +38,14 @@ class DivSailors():
             #   </div>
 
             body += f'{tab*1}<div class="col-4 border border-dark">\n'
-            body += f'{tab*2}<div class="row">{qual.admin_filter(True)}</div>\n'
+            body += f'{tab*2}<div class="row font-weight-bold">{qual.admin_filter(True)}</div>\n'
             for sailor in sailors.filter(qual=qual):
-                name = sailor.get_absolute_url(nostyle=True).split('<')
+                name = sailor.get_absolute_url(nostyle=True, auth=self.auth).split('<')
                 status = ("bg-danger","")[sailor.quald]
                 # print(f'name: {name}')
                 link = '<'.join(name)
                 # print(f'link: {link}')
-                body += f'{tab*2}<div id="{qual}" class="row">\n'
+                body += f'{tab*2}<div id="{qual}" class="row ">\n'
                 body += f'{tab*3}<div class="col {status}">\n{tab*4}{link}\n{tab*3}</div>\n'
                 body += f'{tab*2}</div>\n'
             body += f'{tab*1}</div>\n'
@@ -80,14 +81,11 @@ class Calendar(HTMLCalendar):
         for (_d, _t), events in sorted(times.items()):
             d += f'<li>{_t.strftime("%H%M")}<ul>'
             for event in events:
-                if self.auth:
-                    _name = f'{event.stander.get_absolute_url(nostyle=True)}'
-                    pos = event.get_absolute_url(nostyle=True)
-                else:
-                    _name = f'{event.stander.rate_lname()}'
-                    pos = event.position.qual
+                _name = f'{event.stander.get_absolute_url(nostyle=True, auth=self.auth)}'
+                pos = event.get_absolute_url(nostyle=True, auth=self.auth)
                 if 'Null' in _name:
-                    continue
+                    _name = ""
+                    # continue
                 status = f'{("bg-danger","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("bg-warning", "")[event.acknowledged]}'
                 d += f'<li class="{status}">{pos}</br>'
                 d += f'{_name}</li>'  # {event.stander.name.split(",")[0]}</li>'
@@ -168,12 +166,14 @@ class DivLayout():
             _watches = events.filter(position__qual=list(self.quals).index(position) + 1)
             _day += f'{tab*2}<div class="col border border-dark {position}">\n'
             for watch in _watches:
-                if self.auth:
-                    name = watch.stander.get_absolute_url(nostyle=True)
-                    pos = watch.get_absolute_url(nostyle=True)
-                else:
-                    name = watch.stander.rate_lname()
-                    pos = watch.position
+                # if self.auth:
+                name = watch.stander.get_absolute_url(nostyle=True, auth=self.auth)
+                pos = watch.get_absolute_url(nostyle=True, auth=self.auth)
+                # else:
+                    # name = watch.stander.rate_lname()
+                    # pos = watch.position
+                if "Null" in name:
+                    name = ""
                 status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]}'
                 _day += f'{tab*3}<div class="row {watch.position.label}{(" bg-warning", "")[watch.acknowledged]}">\n'
                 _day += f'{tab*4}<div class="col-xl-5 col-lg-7 col-md-8">\n{tab*5}<span class="text-nowrap">{pos}</span>\n{tab*4}</div>\n'
