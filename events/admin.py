@@ -81,9 +81,9 @@ class DayFilter(SimpleListFilter):
         events = Event.objects.filter(day__gte=self.today.replace(day=1), day__lte=add_months(self.today.replace(day=1), 2)).order_by('day')
         dates = events.dates('day', 'day')
         months = events.dates('day', 'month')
-        for retval in (('day', _date, _date.strftime('%d %b')) for _date in dates):
+        for retval in (('day', _date, _date.strftime('%d %b, %a').upper()) for _date in dates):
             yield retval
-        for retval in (('day__month', _date.month, date(_date.year, _date.month, 1).strftime("%b %y")) for _date in months):
+        for retval in (('day__month', _date.month, date(_date.year, _date.month, 1).strftime("%B %Y")) for _date in months):
             yield retval
 
     def queryset(self, request, queryset):

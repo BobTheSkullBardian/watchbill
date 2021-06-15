@@ -179,7 +179,7 @@ class Qual(models.Model):
 
     def __retr__(self):
         return self.qual
-    
+
     def admin_filter(self, nostyle=False):
         style = ' style="color: black; text-decoration: none; font-weight: bold;"'
         url = f'/admin/sailors/sailor/?qual={self.id}'
@@ -194,7 +194,7 @@ class UA(models.Model):
     sailor = models.ForeignKey(
         Sailor, verbose_name='Watch Stander', on_delete=models.CASCADE)
     start = models.DateField(
-        u'Beginning of Unavailability', help_text=u'Start Day',null=True)
+        u'Beginning of Unavailability', help_text=u'Start Day', null=True)
     end = models.DateField(
         u'End of Unavailability', help_text=u'End Day/Time', null=True)
     desc = models.CharField(

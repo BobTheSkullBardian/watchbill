@@ -41,7 +41,7 @@ class DivSailors():
             body += f'{tab*2}<div class="row font-weight-bold">{qual.admin_filter(True)}</div>\n'
             for sailor in sailors.filter(qual=qual):
                 name = sailor.get_absolute_url(nostyle=True, auth=self.auth).split('<')
-                status = ("bg-danger","")[sailor.quald]
+                status = ("bg-danger", "")[sailor.quald]
                 # print(f'name: {name}')
                 link = '<'.join(name)
                 # print(f'link: {link}')
@@ -51,8 +51,8 @@ class DivSailors():
             body += f'{tab*1}</div>\n'
         body += f'{tab*0}</div>\n'
         return body
-    
-    
+
+
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None, events=None, auth=False):
         super(Calendar, self).__init__()
@@ -152,12 +152,12 @@ class DivLayout():
     #         _header += f'<div class="col h4 float-center">{data}</div>\n'
     #     _header += f'</div>\n'
     #     return _header
-        
+
     def formatday(self, day):
         tab = "\t"
         events = self.events.filter(day=day)
         style = (" text-muted", " ack")[day >= date.today()]
-        layout = day.strftime("%d%b %a")
+        layout = f'{day.strftime("%d%b, %a")}'
         url = f'/admin/events/event/?day={day}'
         href = f'<a href="{url}" style="color: black; text-decoration: none;">{layout}</a>'
         _day = f'{tab*1}<div class="row border border-dark{style}">\n'
@@ -170,8 +170,8 @@ class DivLayout():
                 name = watch.stander.get_absolute_url(nostyle=True, auth=self.auth)
                 pos = watch.get_absolute_url(nostyle=True, auth=self.auth)
                 # else:
-                    # name = watch.stander.rate_lname()
-                    # pos = watch.position
+                #     name = watch.stander.rate_lname()
+                #     pos = watch.position
                 if "Null" in name:
                     name = ""
                 status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]}'

@@ -7,7 +7,7 @@ from .utils import (
 )
 import calendar
 from .models import Event
-from sailors.models import Sailor
+# from sailors.models import Sailor
 from django.views import generic
 from django.shortcuts import (
     render,
@@ -92,7 +92,7 @@ class QuickView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         auth = self.request.user.is_authenticated
-        
+
         li = DivSailors(auth=auth)
         sailors = li.get_sailors()
         # print(sailors)

@@ -15,7 +15,7 @@ import os
 from django.conf.locale.en import formats as en_formats
 
 en_formats.DATETIME_FORMAT = "d M y Hi"
-en_formats.DATE_FORMAT = "d M y"
+en_formats.DATE_FORMAT = "d M y, D"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
