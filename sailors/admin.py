@@ -17,8 +17,8 @@ admin.site.unregister(Group)
 # class TestingAdmin(admin.ModelAdmin):
 #     pass
 
-def in_slack(modeladmin, request, queryset):
-    queryset.update(in_slack=True)
+def mark_slack_active(modeladmin, request, queryset):
+    queryset.update(slack_act=True)
     
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = (
@@ -238,7 +238,7 @@ class SailorAdmin(admin.ModelAdmin):
 
     actions = (
         export_selected_sailors,
-        # in_slack,
+        mark_slack_active,
     )
 
     inlines = (
@@ -275,7 +275,7 @@ class SailorAdmin(admin.ModelAdmin):
         'quald',
         ActiveFilter,
         'dept',
-        'in_slack',
+        'slack_act',
         # 'coversheet',
     )
 
@@ -293,7 +293,8 @@ class SailorAdmin(admin.ModelAdmin):
         (
             'email',
             # 'teams_type',
-            'in_slack',
+            'slack_inv',
+            'slack_act',
         ),
         (
             'availability',
