@@ -158,6 +158,7 @@ class Sailor(models.Model):
         'Teams Access', choices=[('CVR', 'CVR'), ('Guest', 'Guest')],
         max_length=5, default="")
     in_teams = models.BooleanField("In Teams", default=False)
+    in_slack = models.BooleanField("In Slack", default=False)
     report = models.DateField("Report Date", null=True, blank=True)
     qualdate = models.DateField("Date Qual'd", null=True, blank=True)
     coversheet = models.BooleanField('Cover Sheet Uploaded', default=False)

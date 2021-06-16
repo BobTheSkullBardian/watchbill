@@ -17,7 +17,9 @@ admin.site.unregister(Group)
 # class TestingAdmin(admin.ModelAdmin):
 #     pass
 
-
+def in_slack(modeladmin, request, queryset):
+    queryset.update(in_slack=True)
+    
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = (
         'action_time',
@@ -170,6 +172,7 @@ def export_selected_sailors(self, request, queryset):
     field_names.pop(field_names.index('id'))
     field_names.pop(field_names.index('event'))
     field_names.pop(field_names.index('qual'))
+    field_names.pop(field_names.index('ua'))
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename={filename}.csv'.format(meta)
     writer = csv.writer(response)
@@ -235,7 +238,7 @@ class SailorAdmin(admin.ModelAdmin):
 
     actions = (
         export_selected_sailors,
-        # ack,
+        # in_slack,
     )
 
     inlines = (
@@ -272,7 +275,7 @@ class SailorAdmin(admin.ModelAdmin):
         'quald',
         ActiveFilter,
         'dept',
-        'in_teams',
+        'in_slack',
         # 'coversheet',
     )
 
@@ -289,8 +292,8 @@ class SailorAdmin(admin.ModelAdmin):
         ),
         (
             'email',
-            'teams_type',
-            'in_teams',
+            # 'teams_type',
+            'in_slack',
         ),
         (
             'availability',
