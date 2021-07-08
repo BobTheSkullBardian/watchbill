@@ -42,9 +42,7 @@ class DivSailors():
             for sailor in sailors.filter(qual=qual):
                 name = sailor.get_absolute_url(nostyle=True, auth=self.auth).split('<')
                 status = ("bg-danger", "")[sailor.quald]
-                # print(f'name: {name}')
                 link = '<'.join(name)
-                # print(f'link: {link}')
                 body += f'{tab*2}<div id="{qual}" class="row ">\n'
                 body += f'{tab*3}<div class="col {status}">\n{tab*4}{link}\n{tab*3}</div>\n'
                 body += f'{tab*2}</div>\n'

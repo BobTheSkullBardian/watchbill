@@ -77,13 +77,17 @@ admin.site.register(LogEntry, LogEntryAdmin)
 class WatchInline(admin.StackedInline):
     model = Event
     ordering = (
+        '-active',
         "-day",
-        'active',
     )
+    extra = 1
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class UAInline(admin.StackedInline):
     model = UA
+    extra = 1
 
 
 class DefaultListFilter(SimpleListFilter):

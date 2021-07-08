@@ -27,11 +27,11 @@ class Event(models.Model):
     def get_position(self):
         return self.position
 
-    # def get_absolute_url(self):
-    #     label = self._meta.app_label
-    #     name = self._meta.model_name
-    #     url = reverse(f'admin:{label}_{name}_change', args=[self.id])
-    #     return f'<a href="{url}">{str(self.position)}</a>'
+    def absolute_url(self):
+        label = self._meta.app_label
+        name = self._meta.model_name
+        url = reverse(f'admin:{label}_{name}_change', args=[self.id])
+        return f'<a href="{url}">{str(self.position)}</a>'
 
     def get_absolute_url(self, nostyle=False, auth=False):
         label = self._meta.app_label

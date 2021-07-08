@@ -4,7 +4,7 @@ from django.urls import reverse
 from datetime import date, timedelta
 from string import ascii_uppercase
 import calendar
-
+import json
 
 def add_months(sourcedate, months):
     month = sourcedate.month - 1 + months
@@ -53,11 +53,15 @@ class Sailor(models.Model):
     def get_absolute_url(self, nostyle=False, auth=False):
         label = self._meta.app_label
         name = self._meta.model_name
+        styledict = {}
         if not auth:
-            return f'{self.rate_lname()}'
-        style = ' style="color: black; text-decoration: none;"'
+            styledict["pointer-events"] = "none"
+        if nostyle:
+            styledict["color"] = "black"
+            styledict["text-decoration"] = "none"
+        style = 'style="' + json.dumps(styledict).replace(',', ';').strip('{}').replace('"', '') + '"'
         url = reverse(f'admin:{label}_{name}_change', args=[self.id])
-        return f'<a href="{url}"{("", style)[nostyle]}>{self.rate_lname()}</a>'
+        return f'<a href="{url}" {style}>{self.rate_lname()}</a>'
 
     def quals(self):
         return [str(q) for q in self.qual.all()]

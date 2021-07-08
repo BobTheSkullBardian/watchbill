@@ -101,6 +101,7 @@ class QuickView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
         quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
+        context['slack_url'] = 'https://join.slack.com/t/csa63dutysection/shared_invite/zt-rlq6ddgn-XoEPYV6ub0h_FSAqxcGXSw'
         context['prev_month'] = prev_month(d)
         context['curr_month'] = d.strftime("%B %Y")
         context['next_month'] = next_month(d)
