@@ -1,6 +1,7 @@
 from calendar import HTMLCalendar, SUNDAY, monthrange
 from collections import defaultdict
 from django.db.models import Q
+# import pandas as pd
 # from django.core.exceptions import MultipleObjectsReturned
 from datetime import (
     # datetime as dtime,
@@ -17,6 +18,19 @@ from sailors.models import (
     Qual,
     Sailor,
 )
+
+
+# def get_slack_usernames():
+#     import os
+#     file = 'events/slack-csa63dutysection-members.csv'
+#     # print(file)
+#     slack_data = pd.read_csv(file)
+#     print(slack_data)
+#     for i, data in slack_data.iterrows():
+#         email = data['email']
+#         username = data['username']
+#         # print(email, username)
+#         sailor = Sailor.objects.filter(slack_name=email).update(slack_name=username)
 
 
 class DivSailors():
