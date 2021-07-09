@@ -299,6 +299,7 @@ class SailorAdmin(admin.ModelAdmin):
             # 'teams_type',
             'slack_inv',
             'slack_act',
+            'slack_name',
         ),
         (
             'availability',
