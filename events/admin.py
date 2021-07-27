@@ -175,7 +175,7 @@ class EventAdmin(admin.ModelAdmin):
         # show_messages,
         # show_quickview,
         ack_watch,
-        # make_month,
+        make_month,
     )
 
     list_filter = (

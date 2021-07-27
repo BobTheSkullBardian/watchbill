@@ -255,6 +255,7 @@ class SailorAdmin(admin.ModelAdmin):
         'rate',
         'phone',
         'quals',
+        'email',
         # 'quald',
         # 'report',
         'qualdate',
@@ -299,8 +300,8 @@ class SailorAdmin(admin.ModelAdmin):
             'email',
             # 'teams_type',
             # 'slack_inv',
-            'in_slack',
             'slack_name',
+            'in_slack',
         ),
         (
             'availability',
