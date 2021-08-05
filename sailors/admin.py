@@ -177,6 +177,8 @@ def export_selected_sailors(self, request, queryset):
     field_names.pop(field_names.index('event'))
     field_names.pop(field_names.index('qual'))
     field_names.pop(field_names.index('ua'))
+    field_names.pop(field_names.index('teams_type'))
+    field_names.pop(field_names.index('in_teams'))
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename={filename}.csv'.format(meta)
     writer = csv.writer(response)
@@ -184,13 +186,14 @@ def export_selected_sailors(self, request, queryset):
     qualdate_index = header_row.index("Qualdate")
     header_row.insert(qualdate_index + 1, "Quals")
     header_row.insert(qualdate_index + 2, "Dinq")
-    # header_row.insert(len(header_row), "Watches")
+    header_row.insert(len(header_row), "Watches")
     writer.writerow(header_row)
     for obj in queryset:
         row = [getattr(obj, field) for field in field_names]
         row.insert(header_row.index("Quals"), ", ".join(obj.quals()))
-        # row.insert(header_row.index("Watches"), ", ".join(obj.get_watches()))
         row.insert(header_row.index("Dinq"), obj.dinq_date())
+        watches = ', '.join([f'{watch.day} {watch.position}' for watch in obj.event_set.all()])
+        row.insert(header_row.index("Watches"), watches)
         writer.writerow(row)
     return response
 
