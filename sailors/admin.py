@@ -256,9 +256,11 @@ class SailorAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'rate',
+        # 'slack_name',
+        # 'in_slack',
         'phone',
         'quals',
-        'email',
+        # 'email',
         # 'quald',
         # 'report',
         'qualdate',
@@ -270,7 +272,6 @@ class SailorAdmin(admin.ModelAdmin):
         # 'div',
         'dept_div',
         'dinq_date',
-        # 'slack_name',
         # 'off_wb_date',
     )
 
