@@ -145,7 +145,7 @@ class DivLayout():
         self.events = Event.objects.filter(
             day__year=self.year,
             day__month=self.month,
-            active=True,
+            # active=True,
         ).order_by('day')
         days = self.events.dates('day', 'day')  # set([event.day for event in events])
         body = '<!-- begin calendar content-->\n'
@@ -175,21 +175,19 @@ class DivLayout():
         _day = f'{tab*1}<div class="row border border-dark{style}">\n'
         _day += f'{tab*2}<div class="col-sm-1 align-self-center h5">{(layout, href)[self.auth]}</div>\n'
         for i, position in enumerate(self.quals):
-            _watches = events.filter(position__qual=list(self.quals).index(position) + 1)
+            _watches = events.filter(position__qual=list(self.quals).index(position) + 1, active=True)
+            swaps = events.filter(position__qual=list(self.quals).index(position) + 1, active=False)
             _day += f'{tab*2}<div class="col border border-dark {position}">\n'
             for watch in _watches:
-                # if self.auth:
                 name = watch.stander.get_absolute_url(nostyle=True, auth=self.auth)
                 pos = watch.get_absolute_url(nostyle=True, auth=self.auth)
-                # else:
-                #     name = watch.stander.rate_lname()
-                #     pos = watch.position
+                star = bool(len(swaps) and swaps.first().position == watch.position)
                 if "Null" in name:
                     name = ""
                 status = f'{("bg-danger","")[watch.stander.quald or str(position) == "NBP 306"]}'
                 _day += f'{tab*3}<div class="row {watch.position.label}{(" bg-warning", "")[watch.acknowledged]}">\n'
                 _day += f'{tab*4}<div class="col-xl-5 col-lg-7 col-md-8">\n{tab*5}<span class="text-nowrap">{pos}</span>\n{tab*4}</div>\n'
-                _day += f'{tab*4}<div class="col">\n{tab*5}<span class="{status} text-nowrap">{(name, "")[name[-4:]=="Null"]}</span>\n{tab*4}</div>\n'
+                _day += f'{tab*4}<div class="col">\n{tab*5}<span class="{status} text-nowrap">{(name, "")[name[-4:]=="Null"]}{("", " *")[star]}</span>\n{tab*4}</div>\n'
                 _day += f'{tab*3}</div>\n'
             _day += f'{tab*2}</div>\n'
         _day += f'{tab*1}</div>\n'
