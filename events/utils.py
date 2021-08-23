@@ -86,6 +86,7 @@ class Calendar(HTMLCalendar):
         if day == 0:
             return '<td><span class="noday">&nbsp;</span></td>'
         events_per_day = events.filter(day__day=day, active=True)
+        swaps = [e.position for e in events.filter(day__day=day, active=False)]
         times = defaultdict(list)
         for event in events_per_day:
             times[(event.day, event.position.start_time)].append(event)
@@ -100,7 +101,7 @@ class Calendar(HTMLCalendar):
                     # continue
                 status = f'{("bg-danger","")[any([str(event.position.qual) == "NBP 306", event.stander.quald])]} {("bg-warning", "")[event.acknowledged]}'
                 d += f'<li class="{status}">{pos}</br>'
-                d += f'{_name}</li>'  # {event.stander.name.split(",")[0]}</li>'
+                d += f'{_name}{("", " *")[event.position in swaps]}</li>'  # {event.stander.name.split(",")[0]}</li>'
             d += '</ul>'
         return f'<td><span class="date">{day_str}</span><ul> {d} </ul></td>'
 
