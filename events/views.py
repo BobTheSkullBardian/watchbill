@@ -99,9 +99,12 @@ class QuickView(generic.ListView):
 
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
+        last_dutyday = Event.objects.filter(day__year=d.year,day__month=d.month).last().day
+        if (date.today() > last_dutyday):
+            d += timedelta(days=7)
         quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
-        context['slack_url'] = 'https://join.slack.com/t/csa63dutysection/shared_invite/zt-rlq6ddgn-XoEPYV6ub0h_FSAqxcGXSw'
+        # context['slack_url'] = 'https://join.slack.com/t/csa63dutysection/shared_invite/zt-rlq6ddgn-XoEPYV6ub0h_FSAqxcGXSw'
         context['prev_month'] = prev_month(d)
         context['curr_month'] = d.strftime("%B %Y")
         context['next_month'] = next_month(d)
@@ -133,4 +136,4 @@ def get_date(req_day):
         year, month = (int(x) for x in req_day.split('-'))
 
         return date(year, month, day=1)
-    return datetime.today()
+    return date.today()
