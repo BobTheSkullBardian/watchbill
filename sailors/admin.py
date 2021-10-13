@@ -192,7 +192,7 @@ def export_selected_sailors(self, request, queryset):
         row = [getattr(obj, field) for field in field_names]
         row.insert(header_row.index("Quals"), ", ".join(obj.quals()))
         row.insert(header_row.index("Dinq"), obj.dinq_date())
-        watches = ', '.join([f'{watch.day} {watch.position}' for watch in obj.event_set.all()])
+        watches = ', '.join([f'{watch.day} {watch.position}' for watch in obj.event_set.all().order_by("-day")])
         row.insert(header_row.index("Watches"), watches)
         writer.writerow(row)
     return response

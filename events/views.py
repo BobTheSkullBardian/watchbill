@@ -95,13 +95,13 @@ class QuickView(generic.ListView):
 
         li = DivSailors(auth=auth)
         sailors = li.get_sailors()
-        # print(sailors)
 
-        # use today's date for the calendar
+        # use today's date for the calendar unless it's after the last Duty day this month
         d = get_date(self.request.GET.get('month', None))
         last_dutyday = Event.objects.filter(day__year=d.year,day__month=d.month).last().day
         if (date.today() > last_dutyday):
             d += timedelta(days=7)
+
         quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
         # context['slack_url'] = 'https://join.slack.com/t/csa63dutysection/shared_invite/zt-rlq6ddgn-XoEPYV6ub0h_FSAqxcGXSw'
