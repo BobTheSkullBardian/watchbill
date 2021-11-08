@@ -314,7 +314,7 @@ class SailorAdmin(admin.ModelAdmin):
         'qual',
         (
             'quald',
-            'coversheet',
+            # 'coversheet',
         ),
         (
             'qualdate',
