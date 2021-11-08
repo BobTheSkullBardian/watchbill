@@ -98,9 +98,14 @@ class QuickView(generic.ListView):
 
         # use today's date for the calendar unless it's after the last Duty day this month
         d = get_date(self.request.GET.get('month', None))
-        last_dutyday = Event.objects.filter(day__year=d.year,day__month=d.month).last().day
-        if (date.today() > last_dutyday):
-            d += timedelta(days=7)
+        print(d)
+        try:
+            last_dutyday = Event.objects.filter(day__year=d.year,day__month=d.month).last().day
+            if (date.today() > last_dutyday):
+                d += timedelta(days=7)
+        except AttributeError:
+            pass    
+        print(d)
 
         quickview = DivLayout(d.year, d.month, auth)
         table = quickview.formatmonth()
