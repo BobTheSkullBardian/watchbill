@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
     '8080-blush-eagle-swd44w3i.ws-us03.gitpod.io',
     '8080-coffee-bear-pioqe1cv.ws-us03.gitpod.io',
     '8080-coffee-bear-pioqe1cv.ws-us04.gitpod.io',
-    'aharnell.gitlab.io/watchbill/',
+    'aharnell.gitlab.io/watchbill',
     ]
 # ALLOWED_HOSTS = ['SERVER-IP', 'localhost', '127.0.0.1']
 
