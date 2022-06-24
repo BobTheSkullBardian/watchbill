@@ -72,7 +72,7 @@ django-tests:
   stage: test
   script:
     # The MYSQL user only gets permissions for MYSQL_DB, so Django can't create a test database.
-    - echo "GRANT ALL on *.* to '${MYSQL_USER}';"| mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
+    # - echo "GRANT ALL on *.* to '${MYSQL_USER}';"| mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
     # use python3 explicitly. see https://wiki.ubuntu.com/Python/3
     - python3 manage.py test
 
@@ -80,6 +80,7 @@ deploy_staging:
   stage: deploy
   script:
     - echo "Deploy to staging server"
+    - python3 manage.py runserver
   environment:
     name: staging
     url: https://aharnell.gitlab.io/watchbill/
