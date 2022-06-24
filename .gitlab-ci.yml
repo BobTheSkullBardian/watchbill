@@ -36,6 +36,7 @@ variables:
   MYSQL_ROOT_PASSWORD: $MYSQL_PASS
   MYSQL_USER: $MYSQL_USER
   MYSQL_PASSWORD: $MYSQL_PASS
+  CI_ENVIRONMENT_URL: 
 
 default:
   image: ubuntu:20.04
@@ -75,3 +76,11 @@ django-tests:
     - echo "GRANT ALL on *.* to '${MYSQL_USER}';"| mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
     # use python3 explicitly. see https://wiki.ubuntu.com/Python/3
     - python3 manage.py test
+
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://aharnell.gitlab.io/watchbill/
