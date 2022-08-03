@@ -92,6 +92,7 @@ build-job:
     - vm-docker
   stage: build
   script:
+    - sudo pip install virtualenv
     - echo "creating virtual environment for the project..."
     - virtualenv $(pwd)/venv
     - source $(pwd)/venv/bin/activate
