@@ -89,7 +89,7 @@ stages:
 
 build-job:
   tags:
-    - vm-shell
+    - vm-docker
   stage: build
   script:
     - echo "creating virtual environment for the project..."
@@ -104,7 +104,7 @@ build-job:
 
 test-job:
   tags:
-    - vm-shell
+    - vm-docker
   stage: test
   script:
     - echo "Activating virtual environment..."
@@ -124,7 +124,7 @@ variables:
 
 release-job:
   tags:
-    - vm-shell
+    - vm-docker
   stage: release
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -137,7 +137,7 @@ release-job:
 # Deploy petclinic
 deploy-job:
   tags:
-    - vm-shell
+    - vm-docker
   stage: deploy
   before_script:
     - chmod 400 $SSH_KEY
