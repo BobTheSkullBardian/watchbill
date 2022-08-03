@@ -79,4 +79,4 @@ django-tests:
 pages:
   stage: deploy
   script:
-    - python3 manage.py runserver
+    - python3 manage.py runserver &
