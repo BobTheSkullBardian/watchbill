@@ -13,7 +13,7 @@ mccabe==0.6.1
 mysqlclient==2.0.3
 numpy==1.20.1
 openpyxl==3.0.6
-pandas==1.2.3
+#pandas==1.2.3
 #psycopg2==2.8.6
 pycodestyle==2.6.0
 pyflakes==2.2.0
@@ -21,5 +21,5 @@ python-dateutil==2.8.1
 pytz==2021.1
 six==1.15.0
 sqlparse==0.4.1
-virtualenv==20.4.2
+#virtualenv==20.4.2
 xlrd==2.0.1
