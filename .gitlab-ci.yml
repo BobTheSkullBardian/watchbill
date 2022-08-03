@@ -30,53 +30,119 @@
 # .gitlab-ci.yml are passed to the service and variables defined in the GitLab UI are not.
 # https://gitlab.com/gitlab-org/gitlab/-/issues/30178
 
-variables:
-  # DJANGO_CONFIG: "test"
-  MYSQL_DATABASE: $MYSQL_DB
-  MYSQL_ROOT_PASSWORD: $MYSQL_PASS
-  MYSQL_USER: $MYSQL_USER
-  MYSQL_PASSWORD: $MYSQL_PASS
+# variables:
+#   # DJANGO_CONFIG: "test"
+#   MYSQL_DATABASE: $MYSQL_DB
+#   MYSQL_ROOT_PASSWORD: $MYSQL_PASS
+#   MYSQL_USER: $MYSQL_USER
+#   MYSQL_PASSWORD: $MYSQL_PASS
 
-default:
-  image: ubuntu:20.04
-  #
-  # Pick zero or more services to be used on all builds.
-  # Only needed when using a docker container to run your tests in.
-  # Check out: https://docs.gitlab.com/ee/ci/services/index.html
-  services:
-    - mysql:8.0
-  #
-  # This folder is cached between builds
-  # http://docs.gitlab.com/ee/ci/yaml/README.html#cache
-  cache:
-    paths:
-      - ~/.cache/pip/
-  before_script:
-    - apt -y update
-    - apt -y install apt-utils
-    - apt -y install net-tools python3.8 python3-pip mysql-client libmysqlclient-dev
-    - apt -y upgrade
-    - pip3 install -r requirements.txt
+# default:
+#   image: ubuntu:20.04
+#   #
+#   # Pick zero or more services to be used on all builds.
+#   # Only needed when using a docker container to run your tests in.
+#   # Check out: https://docs.gitlab.com/ee/ci/services/index.html
+#   services:
+#     - mysql:8.0
+#   #
+#   # This folder is cached between builds
+#   # http://docs.gitlab.com/ee/ci/yaml/README.html#cache
+#   cache:
+#     paths:
+#       - ~/.cache/pip/
+#   before_script:
+#     - apt -y update
+#     - apt -y install apt-utils
+#     - apt -y install net-tools python3.8 python3-pip mysql-client libmysqlclient-dev
+#     - apt -y upgrade
+#     - pip3 install -r requirements.txt
 
 
-migrations:
+# migrations:
+#   stage: build
+#   script:
+#     - python3 manage.py makemigrations
+#     # - python3 manage.py makemigrations myapp
+#     - python3 manage.py migrate
+#     - python3 manage.py check
+
+
+# django-tests:
+#   stage: test
+#   script:
+#     # The MYSQL user only gets permissions for MYSQL_DB, so Django can't create a test database.
+#     # - echo "GRANT ALL on *.* to '${MYSQL_USER}';"| mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
+#     # use python3 explicitly. see https://wiki.ubuntu.com/Python/3
+#     - python3 manage.py test
+
+# pages:
+#   stage: deploy
+#   script:
+#     - python3 manage.py runserver &
+
+stages:
+  - build
+  - test
+  - release
+  - deploy
+
+build-job:
+  tags:
+    - vm-shell
   stage: build
   script:
-    - python3 manage.py makemigrations
-    # - python3 manage.py makemigrations myapp
-    - python3 manage.py migrate
-    - python3 manage.py check
+    - echo "creating virtual environment for the project..."
+    - virtualenv $(pwd)/venv
+    - source $(pwd)/venv/bin/activate
+    - echo "Installing requirements..."
+    - pip install -r requirements.txt
+    - deactivate
+  artifacts:
+    paths:
+      - $(pwd)/venv
 
-
-django-tests:
+test-job:
+  tags:
+    - vm-shell
   stage: test
   script:
-    # The MYSQL user only gets permissions for MYSQL_DB, so Django can't create a test database.
-    # - echo "GRANT ALL on *.* to '${MYSQL_USER}';"| mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
-    # use python3 explicitly. see https://wiki.ubuntu.com/Python/3
-    - python3 manage.py test
+    - echo "Activating virtual environment..."
+    - source $(pwd)/venv/bin/activate
+    - echo "Running unit tests..."
+    - python manage.py test budget
+    - echo "Checking the server..."
+    - python manage.py runserver &
+    - sleep 10
+    - curl -sSf http://localhost:8000 > /dev/null && echo "Server is Up"
+    - sudo pkill python
+    - deactivate
+    - echo "All tests successfully passed."
 
-pages:
-  stage: deploy
+variables:
+  CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_IID
+
+release-job:
+  tags:
+    - vm-shell
+  stage: release
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - python3 manage.py runserver &
+    - docker build -t $CONTAINER_IMAGE .
+    - docker push $CONTAINER_IMAGE
+  after_script:
+    - docker logout
+
+# Deploy petclinic
+deploy-job:
+  tags:
+    - vm-shell
+  stage: deploy
+  before_script:
+    - chmod 400 $SSH_KEY
+  script:
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY proxmox@192.168.0.137 "
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+        docker run -d -p 5000:8000 $CONTAINER_IMAGE"
+
