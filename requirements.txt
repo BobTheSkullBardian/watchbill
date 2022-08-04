@@ -23,3 +23,4 @@ six==1.15.0
 sqlparse==0.4.1
 #virtualenv==20.4.2
 xlrd==2.0.1
+gunicorn==20.1.0
