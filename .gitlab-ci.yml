@@ -116,7 +116,7 @@ test-job:
     - python manage.py runserver &
     - sleep 10
     - curl -sSf http://localhost:8000 > /dev/null && echo "Server is Up"
-    - sudo pkill python
+    - pkill python
     - deactivate
     - echo "All tests successfully passed."
 
