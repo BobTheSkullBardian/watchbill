@@ -111,7 +111,7 @@ test-job:
     - echo "Activating virtual environment..."
     - source $(pwd)/venv/bin/activate
     - echo "Running unit tests..."
-    - python manage.py test budget
+    - python manage.py test wbc
     - echo "Checking the server..."
     - python manage.py runserver &
     - sleep 10
