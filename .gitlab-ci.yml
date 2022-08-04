@@ -54,7 +54,7 @@ default:
   before_script:
     - apt -y update
     - apt -y install apt-utils
-    - apt -y install net-tools python3.8 python3-pip mysql-client libmysqlclient-dev
+    - apt -y install net-tools python3.8 python3-pip sqlite3
     - apt -y upgrade
     - pip3 install -r requirements.txt
 
@@ -79,4 +79,4 @@ django-tests:
 deploy:
   stage: deploy
   script:
-    - python manage.py runserver 0.0.0.0:8000
+    - python3 manage.py runserver 0.0.0.0:8000
