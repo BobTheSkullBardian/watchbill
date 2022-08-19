@@ -31,7 +31,6 @@ DEBUG = True
 # DEBUG = False
 
 ALLOWED_HOSTS = [
-    '8000-csa63watchbil-watchbill-86et4jb94l4.ws-us61.gitpod.io',
     '8000-csa63watchbil-watchbill-llv54bzw0fj.ws-us62.gitpod.io',
     'localhost'
     ]
