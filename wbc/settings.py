@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     '8000-csa63watchbil-watchbill-llv54bzw0fj.ws-us62.gitpod.io',
     'localhost'
     'watchbill.herokuapp.com'
+    '34.232.247.167'
     ]
 # ALLOWED_HOSTS = ['SERVER-IP', 'localhost', '127.0.0.1']
 
