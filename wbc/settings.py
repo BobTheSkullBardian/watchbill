@@ -32,9 +32,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '8000-csa63watchbil-watchbill-llv54bzw0fj.ws-us62.gitpod.io',
-    'localhost'
-    'watchbill.herokuapp.com'
-    '34.232.247.167'
+    'localhost',
+    'watchbill.herokuapp.com',
+    '34.232.247.167',
     '8080-blush-eagle-swd44w3i.ws-us03.gitpod.io',
     '8080-coffee-bear-pioqe1cv.ws-us03.gitpod.io',
     '8080-coffee-bear-pioqe1cv.ws-us04.gitpod.io',
