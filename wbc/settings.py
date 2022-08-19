@@ -31,17 +31,9 @@ DEBUG = True
 # DEBUG = False
 
 ALLOWED_HOSTS = [
-    '34.232.247.167',
-    '8080-blush-eagle-swd44w3i.ws-us03.gitpod.io',
-    '8080-coffee-bear-pioqe1cv.ws-us03.gitpod.io',
-    '8080-coffee-bear-pioqe1cv.ws-us04.gitpod.io',
     '8000-csa63watchbil-watchbill-86et4jb94l4.ws-us61.gitpod.io',
-    'aharnell.gitlab.io/watchbill',
-    'watchbill.herokuapp.com',
-    'csa63watchbill.herokuapp.com',
-    'localhost',
     '8000-csa63watchbil-watchbill-llv54bzw0fj.ws-us62.gitpod.io',
-    
+    'localhost'
     ]
 # ALLOWED_HOSTS = ['SERVER-IP', 'localhost', '127.0.0.1']
 
