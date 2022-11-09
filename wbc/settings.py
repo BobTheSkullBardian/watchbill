@@ -31,7 +31,7 @@ DEBUG = True
 # DEBUG = False
 
 ALLOWED_HOSTS = [
-    '8000-csa63watchbil-watchbill-2gvflvzr4eo.ws-us75.gitpod.io',
+    '8000-csa63watchbil-watchbill-z0hy3sncllv.ws-us75.gitpod.io',
     'localhost',
     'watchbill.herokuapp.com',
     '34.232.247.167',
